@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  geoserver:
+    image: kartoza/geoserver
+    container_name: geoserver
+    environment:
+      - GEOSERVER_ADMIN_USER=admin
+      - GEOSERVER_ADMIN_PASSWORD=geoserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/tungba103/geoserver/data_dir:/opt/geoserver/data_dir
+    depends_on:
+      - db
+    networks:
+      - geoserver_network
+
+  db:
+    image: postgis/postgis
+    container_name: postgis
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgis
+    ports:
+      - "5439:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    networks:
+      - geoserver_network
+
+volumes:
+  postgis_data:
+
+networks:
+  geoserver_network:
