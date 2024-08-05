@@ -2,6 +2,7 @@ import { LayerGroup, LayersControl, MapContainer, TileLayer, useMapEvent, WMSTil
 import { Slider } from '@nextui-org/slider';
 import { useState } from 'react';
 import { LatLngBoundsLiteral } from 'leaflet';
+import { CustomSlider } from './slider';
 
 const getFeatureInfo = async (lat, lng, layerName, map) => {
   const point = map.latLngToContainerPoint([lat, lng], map.getZoom());
@@ -71,7 +72,6 @@ export const Map = ({ zoom = 5 }) => {
     return null;
   };
 
-  const [stepSlider, setStepSlider] = useState(1);
   const [clickedLocation, setClickedLocation] = useState(null);
   const [mousemoveLocation, setMousemoveLocation] = useState(null);
   const [featureInfo, setFeatureInfo] = useState(null);
@@ -89,8 +89,8 @@ export const Map = ({ zoom = 5 }) => {
       const { lat, lng } = event.latlng;
       setClickedLocation({ lat, lng });
       try {
-        const data = await getFeatureInfo(lat, lng, `GeoTIFF:PVOUT_0${stepSlider}`, map);
-        setFeatureInfo(data);
+        // const data = await getFeatureInfo(lat, lng, `GeoTIFF:PVOUT_0${stepSlider}`, map);
+        // setFeatureInfo(data);
       } catch (error) {
         console.error('Error fetching feature info:', error);
       }
@@ -109,7 +109,7 @@ export const Map = ({ zoom = 5 }) => {
         maxBoundsViscosity={1.0}
       >
         <TileLayer url={'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'} />
-        <LayersControl>
+        {/* <LayersControl>
           <LayersControl.Overlay
             name='PVOUT_up'
             checked={true}
@@ -138,7 +138,7 @@ export const Map = ({ zoom = 5 }) => {
               />
             </LayerGroup>
           </LayersControl.Overlay>
-        </LayersControl>
+        </LayersControl> */}
         <EnforceBounds />
         <HandleMapClick />
         <HandleMapMousemove />
@@ -158,21 +158,7 @@ export const Map = ({ zoom = 5 }) => {
               </div>
             </div>
           </div>
-          <div className='flex justify-center align-middle p-4'>
-            <Slider
-              label='Time Slider'
-              step={1}
-              maxValue={10}
-              minValue={1}
-              value={stepSlider}
-              onChange={(value) => {
-                if (typeof value === 'number') {
-                  setStepSlider(value);
-                }
-              }}
-              className='w-[400px] bg-white px-6 py-4 rounded-lg'
-            />
-          </div>
+          <CustomSlider />
         </div>
       </MapContainer>
     </>
