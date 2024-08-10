@@ -32,35 +32,36 @@ export const CustomSlider = () => {
   }, [stepSlider]);
 
   return (
-    <div className='flex justify-center align-middle p-4'>
-      <div className='flex flex-col align-middle justify-center bg-white p-4 rounded-md'>
-        <p className='mx-auto pb-2 text-lg'>
-          {displayDate ? format(displayDate, 'dd/MM/yyyy'): ''} - <span className='text-gray-500'>31/12/2024</span>
-        </p>
-        <div className='mx-auto'>
-          <Slider
-            size='sm'
-            step={1}
-            maxValue={totalSteps}
-            minValue={1}
-            value={stepSlider}
-            onChange={(value) => {
-              if (typeof value === 'number') {
-                setStepSlider(value);
-              }
-            }}
-            className='w-[880px] bg-white px-6 py-4 rounded-lg'
-          />
+    <div className='flex justify-center align-middle mb-4'>
+      <div className='flex flex-col align-middle justify-center bg-white bg-background/90 p-2 pb-0 rounded-md'>
+        <div className='flex justify-between text-medium'>
+          <p>1/8/2024</p>
+          <p>
+            {displayDate ? format(displayDate, 'dd/MM/yyyy') : ''} - <span className='text-gray-500'>31/12/2024</span>
+          </p>
+          <p>31/12/2024</p>
         </div>
+        <Slider
+          size='sm'
+          step={1}
+          maxValue={totalSteps}
+          minValue={1}
+          value={stepSlider}
+          onChange={(value) => {
+            if (typeof value === 'number') {
+              setStepSlider(value);
+            }
+          }}
+          className='w-[2020px] py-1 rounded-lg'
+          classNames={{
+            thumb: 'w-4 h-4',
+          }}
+        />
         <div className='mx-auto'>
           <TimeAxis
-            width={800}
-            height={40}
+            width={2000}
+            height={32}
           />
-        </div>
-        <div className='flex justify-between text-md font-bp'>
-          <p>1/8/2024</p>
-          <p>31/12/2024</p>
         </div>
       </div>
     </div>

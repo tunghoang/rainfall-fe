@@ -1,39 +1,44 @@
 import 'leaflet/dist/leaflet.css';
 import { Route, Routes } from 'react-router-dom';
 
-import IndexPage from '@/pages/index';
-import DocsPage from '@/pages/docs';
-import PricingPage from '@/pages/pricing';
-import BlogPage from '@/pages/blog';
-import AboutPage from '@/pages/about';
-import FullScreenMapPage from './pages/full-screen-map';
+import HomePage from '@/pages/HomePage';
+import MapPage from './pages/MapPage';
+import DashboardPage from '@/pages/DashboardPage';
+import HelpPage from '@/pages/HelpPage';
+import AboutPage from '@/pages/AboutPage';
+import BlogPage from '@/pages/BlogPage';
+import OtherToolsPage from './pages/OtherToolsPage';
 
 function App() {
   return (
     <Routes>
       <Route
-        element={<IndexPage />}
+        element={<HomePage />}
         path='/'
       />
       <Route
-        element={<DocsPage />}
-        path='/docs'
+        element={<MapPage />}
+        path='/map'
       />
       <Route
-        element={<PricingPage />}
-        path='/pricing'
+        element={<DashboardPage />}
+        path='/dashboard'
       />
       <Route
-        element={<BlogPage />}
-        path='/blog'
+        element={<HelpPage />}
+        path='/help'
       />
       <Route
         element={<AboutPage />}
         path='/about'
       />
       <Route
-        element={<FullScreenMapPage />}
-        path='/full-screen-map'
+        element={<BlogPage />}
+        path='/blog'
+      />
+      <Route
+        element={<OtherToolsPage />}
+        path='/other-tools'
       />
     </Routes>
   );

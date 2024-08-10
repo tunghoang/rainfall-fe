@@ -1,0 +1,23 @@
+ curl -v -u admin:123123 -X POST http://localhost:8080/geoserver/rest/workspaces/GeoTIFF/datastores -H "accept: application/xml" -H "content-type: application/json" -d '{
+  "name": "PVOUT_05",
+  "description": "",
+  "enabled": true,
+  "workspace": {
+    "name": "WorkspaceInfoImpl-7b8c8cca:1912d0f14c1:7ffc",
+    "link": "file:Data/monthly/PVOUT_07.tif"
+  },
+  "connectionParameters": [
+    {
+      "key": "enabledPanel:paramValue",
+      "value": "on"
+    },
+    {
+      "key": "parametersPanel:url:fileInput:border:border_body:paramValue",
+      "value": "file:Data/monthly/PVOUT_07.tif"
+    }
+  ],
+  "__default": true,
+  "featureTypes": [
+    "string"
+  ]
+}'

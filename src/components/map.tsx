@@ -1,5 +1,12 @@
-import { LayerGroup, LayersControl, MapContainer, TileLayer, useMapEvent, WMSTileLayer } from 'react-leaflet';
-import { Slider } from '@nextui-org/slider';
+import {
+  LayerGroup,
+  LayersControl,
+  MapContainer,
+  TileLayer,
+  useMapEvent,
+  WMSTileLayer,
+  ZoomControl,
+} from 'react-leaflet';
 import { useState } from 'react';
 import { LatLngBoundsLiteral } from 'leaflet';
 import { CustomSlider } from './slider';
@@ -98,6 +105,8 @@ export const Map = ({ zoom = 5 }) => {
     return null;
   };
 
+  console.log('featureInfo:', clickedLocation);
+
   return (
     <>
       <MapContainer
@@ -107,17 +116,22 @@ export const Map = ({ zoom = 5 }) => {
         minZoom={4}
         bounds={vietnamBounds}
         maxBoundsViscosity={1.0}
+        zoomControl={false}
+        style={{
+          marginTop: '64px',
+        }}
       >
         <TileLayer url={'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'} />
-        {/* <LayersControl>
+        <ZoomControl position='topleft' />
+        <LayersControl position='topleft'>
           <LayersControl.Overlay
             name='PVOUT_up'
             checked={true}
           >
-            <LayerGroup key={stepSlider}>
+            <LayerGroup key={1}>
               <WMSTileLayer
                 url='http://localhost:8080/geoserver/GeoTIFF/wms'
-                layers={`GeoTIFF:PVOUT_0${stepSlider}`}
+                layers={`GeoTIFF:PVOUT_0${1}`}
                 format='image/png'
                 transparent={true}
                 version='1.1.0'
@@ -128,36 +142,38 @@ export const Map = ({ zoom = 5 }) => {
             name='PVOUT_down'
             checked={false}
           >
-            <LayerGroup key={10 - stepSlider}>
+            <LayerGroup key={10 - 1}>
               <WMSTileLayer
                 url='http://localhost:8080/geoserver/GeoTIFF/wms'
-                layers={`GeoTIFF:PVOUT_0${10 - stepSlider}`}
+                layers={`GeoTIFF:PVOUT_0${10 - 1}`}
                 format='image/png'
                 transparent={true}
                 version='1.1.0'
               />
             </LayerGroup>
           </LayersControl.Overlay>
-        </LayersControl> */}
+        </LayersControl>
         <EnforceBounds />
         <HandleMapClick />
         <HandleMapMousemove />
-        <div className='absolute bottom-0 left-0 w-full z-[1000]'>
-          <div className='flex justify-start'>
-            <div className='ml-4 p-4 rounded-lg bg-white w-[320px]'>
+        <div className='absolute top-10 right-10 z-[1000]'>
+          <div className='flex flex-col gap-4'>
+            <div className='ml-4 p-4 rounded-lg bg-white bg-background/75 w-80 min-h-24'>
               <div>
                 <p className='text-xl'>Location Data</p>
                 <p>Latitude: {mousemoveLocation?.lat ?? '-'}</p>
                 <p>Longitude: {mousemoveLocation?.lng ?? '-'}</p>
               </div>
             </div>
-            <div className='ml-4 p-4 rounded-lg bg-white w-[320px]'>
+            <div className='ml-4 p-4 rounded-lg bg-white bg-background/75 w-80 min-h-24'>
               <div>
                 <p className='text-xl'>Clicked Data</p>
                 <p>GRAY_INDEX: {featureInfo ?? '-'}</p>
               </div>
             </div>
           </div>
+        </div>
+        <div className='absolute bottom-0 left-0 w-full z-[1000]'>
           <CustomSlider />
         </div>
       </MapContainer>
