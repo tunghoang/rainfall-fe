@@ -1,21 +1,32 @@
 // src/TimeAxis.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 interface TimeAxisProps {
-  width: number;
-  height: number;
+  startDate: Date;
+  endDate: Date;
 }
 
-const TimeAxis: React.FC<TimeAxisProps> = ({ width, height }) => {
+const TimeAxis: React.FC<TimeAxisProps> = ({ startDate, endDate }) => {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth((window.innerWidth * 5) / 6);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const axisRef = useRef<SVGGElement | null>(null);
 
   useEffect(() => {
     if (axisRef.current) {
-      const x = d3
-        .scaleTime()
-        .domain([new Date(2024, 7, 1), new Date(2024, 8, 1)]) // Aug 1, 2024 to Dec 31, 2024
-        .range([0, width]);
+      const x = d3.scaleTime().domain([startDate, endDate]).range([0, width]);
 
       const axis = d3.axisBottom(x);
 
@@ -47,12 +58,12 @@ const TimeAxis: React.FC<TimeAxisProps> = ({ width, height }) => {
       //   .attr('text-anchor', (d: Date) => (d.getDate() === 1 ? 'middle' : 'middle'))
       //   .attr('dy', (d: Date) => (d.getDate() === 1 ? '10' : '0')); // Add spacing for month labels
     }
-  }, [width, height]);
+  }, [width]);
 
   return (
     <svg
-      width={width}
-      height={height}
+      width='100%'
+      height={32}
     >
       <g ref={axisRef} />
     </svg>

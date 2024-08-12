@@ -2,3 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.transparent-base {
+  @apply bg-white bg-opacity-60;
+}
+
+.card-title {
+  @apply text-xl font-bold;
+}
+
+.card-content {
+  @apply text-base;
+}

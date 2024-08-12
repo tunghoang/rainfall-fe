@@ -20,7 +20,7 @@ export const Navbar = ({ wrapperClassName }: { wrapperClassName?: string }) => {
     <NextUINavbar
       maxWidth='xl'
       position='sticky'
-      className='z-[1000] bg-white shadow-md'
+      className='bg-white shadow-md navbar-height'
       classNames={{
         wrapper: wrapperClassName,
       }}
@@ -55,11 +55,6 @@ export const Navbar = ({ wrapperClassName }: { wrapperClassName?: string }) => {
       </NavbarContent>
 
       <NavbarContent justify='end'>
-        {/* <NavbarItem>
-          <div className='p-2 pt-3'>
-            <ThemeSwitch />
-          </div>
-        </NavbarItem> */}
         <NavbarItem>
           <div className='p-2 rounded-full cursor-pointer'>
             <SearchIcon />

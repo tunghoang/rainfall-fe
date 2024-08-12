@@ -1,24 +1,25 @@
 import { Slider } from '@nextui-org/slider';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import TimeAxis from './TimeAxis';
 import { format } from 'date-fns';
+import { SliderContext } from './Map';
 
 export const CustomSlider = () => {
-  const [stepSlider, setStepSlider] = useState(1);
-  const [displayDate, setDisplayDate] = useState();
+  const { stepSlider, setStepSlider } = useContext(SliderContext) || { stepSlider: 0, setStepSlider: () => {} };
 
-  const startDate = new Date(2024, 7, 1); // 1/8/2024
-  const endDate = new Date(2024, 11, 31); // 31/12/2024
+  const [displayDate, setDisplayDate] = useState<string>();
+
+  const startDate = new Date(2024, 7, 1);
+  const endDate = new Date(2024, 7, 31);
 
   // Function to calculate the number of days between two dates
-  const calculateDaysBetween = (start, end) => {
-    const diffTime = Math.abs(end - start);
+  const calculateDaysBetween = (start: Date, end: Date) => {
+    const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
 
-  // Function to add days to a date
-  const addDays = (date, days) => {
+  const addDays = (date: Date, days: number) => {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
@@ -33,13 +34,14 @@ export const CustomSlider = () => {
 
   return (
     <div className='flex justify-center align-middle mb-4'>
-      <div className='flex flex-col align-middle justify-center bg-white bg-background/90 p-2 pb-0 rounded-md'>
-        <div className='flex justify-between text-medium'>
-          <p>1/8/2024</p>
+      <div className='flex flex-col align-middle justify-center p-2 pb-2 rounded-md transparent-base w-5/6'>
+        <div className='flex justify-between text-base'>
+          <p>{format(startDate, 'dd/MM/yyyy')}</p>
           <p>
-            {displayDate ? format(displayDate, 'dd/MM/yyyy') : ''} - <span className='text-gray-500'>31/12/2024</span>
+            {displayDate ? format(displayDate, 'dd/MM/yyyy') : ''} -{' '}
+            <span className='text-gray-500'>{format(endDate, 'dd/MM/yyyy')}</span>
           </p>
-          <p>31/12/2024</p>
+          <p>{format(endDate, 'dd/MM/yyyy')}</p>
         </div>
         <Slider
           size='sm'
@@ -52,17 +54,15 @@ export const CustomSlider = () => {
               setStepSlider(value);
             }
           }}
-          className='w-[2020px] py-1 rounded-lg'
+          className='py-1 rounded-lg'
           classNames={{
             thumb: 'w-4 h-4',
           }}
         />
-        <div className='mx-auto'>
-          <TimeAxis
-            width={2000}
-            height={32}
-          />
-        </div>
+        <TimeAxis
+          startDate={startDate}
+          endDate={endDate}
+        />
       </div>
     </div>
   );
