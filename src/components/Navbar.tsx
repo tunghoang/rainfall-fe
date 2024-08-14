@@ -8,21 +8,22 @@ import {
   NavbarMenu,
   NavbarMenuItem,
 } from '@nextui-org/navbar';
+import { DropdownItem, DropdownTrigger, Dropdown, DropdownMenu } from '@nextui-org/react';
 import { link as linkStyles } from '@nextui-org/theme';
 import clsx from 'clsx';
 
 import { siteConfig } from '@/config/site';
-import { SearchIcon, UserIcon } from '@/components/icons';
+import { ChevronDown, SearchIcon, UserIcon } from '@/components/icons';
 import { Logo } from '@/components/icons';
 
-export const Navbar = ({ wrapperClassName }: { wrapperClassName?: string }) => {
+export const Navbar = () => {
   return (
     <NextUINavbar
       maxWidth='xl'
       position='sticky'
-      className='bg-white shadow-md navbar-height'
+      className='bg-white shadow-md h-11'
       classNames={{
-        wrapper: wrapperClassName,
+        wrapper: 'max-w-full',
       }}
     >
       <NavbarContent justify='start'>
@@ -33,24 +34,67 @@ export const Navbar = ({ wrapperClassName }: { wrapperClassName?: string }) => {
             href='/'
           >
             <Logo />
-            <p className='font-bold text-inherit'>ACME</p>
+            <p className='font-bold text-inherit text-sm'>ACME</p>
           </Link>
         </NavbarBrand>
         <div className='hidden lg:flex gap-8 justify-start ml-2'>
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <Link
-                className={clsx(
-                  linkStyles({ color: 'foreground' }),
-                  'data-[active=true]:text-primary data-[active=true]:font-medium font-medium '
-                )}
-                color='foreground'
-                href={item.href}
-              >
-                {item.label}
-              </Link>
-            </NavbarItem>
-          ))}
+          {siteConfig.navItems.map((item) => {
+            return item.subItems ? (
+              <Dropdown key={item.label}>
+                <NavbarItem>
+                  <DropdownTrigger>
+                    <div
+                      className={clsx(
+                        linkStyles({ color: 'foreground' }),
+                        'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm cursor-pointer'
+                      )}
+                      color='foreground'
+                    >
+                      {item.label}
+                      <span>
+                        <ChevronDown size={16} />
+                      </span>
+                    </div>
+                  </DropdownTrigger>
+                </NavbarItem>
+                <DropdownMenu
+                  aria-label='ACME features'
+                  // className='w-[340px]'
+                  // itemClasses={{
+                  //   base: 'gap-4',
+                  // }}
+                >
+                  {item.subItems.map((subItem) => (
+                    <DropdownItem key={subItem.href}>
+                      <Link
+                        className={clsx(
+                          linkStyles({ color: 'foreground' }),
+                          'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm'
+                        )}
+                        color='foreground'
+                        href={subItem.href}
+                      >
+                        {subItem.label}
+                      </Link>
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            ) : (
+              <NavbarItem key={item.href}>
+                <Link
+                  className={clsx(
+                    linkStyles({ color: 'foreground' }),
+                    'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm'
+                  )}
+                  color='foreground'
+                  href={item.href}
+                >
+                  {item.label}
+                </Link>
+              </NavbarItem>
+            );
+          })}
         </div>
       </NavbarContent>
 

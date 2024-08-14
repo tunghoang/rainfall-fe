@@ -81,7 +81,7 @@ export const Map = () => {
             <LayerGroup key={stepSlider}>
               <WMSTileLayer
                 url='http://localhost:8080/geoserver/GeoTIFF/wms'
-                layers={`GeoTIFF:PVOUT_0${stepSlider % 6}`}
+                layers={`GeoTIFF:PVOUT_0${1 + (stepSlider % 6)}`}
                 format='image/png'
                 transparent={true}
                 version='1.1.0'

@@ -1,47 +1,54 @@
 import 'leaflet/dist/leaflet.css';
-import { Route, Routes } from 'react-router-dom';
+import { useRoutes } from 'react-router-dom';
 
 import HomePage from '@/pages/HomePage';
 import MapPage from './pages/MapPage';
 import DashboardPage from '@/pages/DashboardPage';
-import HelpPage from '@/pages/HelpPage';
 import AboutPage from '@/pages/AboutPage';
-import BlogPage from '@/pages/BlogPage';
 import OtherToolsPage from './pages/OtherToolsPage';
+import DataSourcesPage from './pages/DataSourcesPage';
+import DataCatalogPage from './pages/DataCatalogPage';
+import DataCollectionPage from './pages/DataCollectionPage';
 
 function App() {
-  return (
-    <Routes>
-      <Route
-        element={<HomePage />}
-        path='/'
-      />
-      <Route
-        element={<MapPage />}
-        path='/map'
-      />
-      <Route
-        element={<DashboardPage />}
-        path='/dashboard'
-      />
-      <Route
-        element={<HelpPage />}
-        path='/help'
-      />
-      <Route
-        element={<AboutPage />}
-        path='/about'
-      />
-      <Route
-        element={<BlogPage />}
-        path='/blog'
-      />
-      <Route
-        element={<OtherToolsPage />}
-        path='/other-tools'
-      />
-    </Routes>
-  );
+  const routes = useRoutes([
+    { path: '/', element: <HomePage />, index: true },
+    { path: 'map', element: <MapPage /> },
+    { path: 'dashboard', element: <DashboardPage /> },
+    {
+      path: 'data-management',
+      children: [
+        {
+          path: 'data-sources',
+          element: <DataSourcesPage />,
+        },
+        {
+          path: 'data-catalog',
+          element: <DataCatalogPage />,
+        },
+        {
+          path: 'data-collection',
+          element: <DataCollectionPage />,
+        },
+        {
+          path: 'data-analysis',
+          element: <DataCollectionPage />,
+        },
+        {
+          path: 'data-visualization',
+          element: <DataCollectionPage />,
+        },
+        {
+          path: 'data-report',
+          element: <DataCollectionPage />,
+        },
+      ],
+    },
+    { path: 'about', element: <AboutPage /> },
+    { path: 'other-tools', element: <OtherToolsPage /> },
+  ]);
+
+  return routes;
 }
 
 export default App;

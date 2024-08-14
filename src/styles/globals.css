@@ -7,9 +7,9 @@
 }
 
 .card-title {
-  @apply text-xl font-bold;
+  @apply text-base font-bold;
 }
 
 .card-content {
-  @apply text-base;
+  @apply text-sm;
 }
