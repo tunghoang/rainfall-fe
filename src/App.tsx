@@ -5,10 +5,9 @@ import HomePage from '@/pages/HomePage';
 import MapPage from './pages/MapPage';
 import DashboardPage from '@/pages/DashboardPage';
 import AboutPage from '@/pages/AboutPage';
-import OtherToolsPage from './pages/OtherToolsPage';
-import DataSourcesPage from './pages/DataSourcesPage';
-import DataCatalogPage from './pages/DataCatalogPage';
-import DataCollectionPage from './pages/DataCollectionPage';
+import WorkspacesPage from './pages/data-management/WorkspacesPage';
+import LayersPage from './pages/data-management/LayersPage';
+import StoresPage from './pages/data-management/StoresPage';
 
 function App() {
   const routes = useRoutes([
@@ -19,33 +18,20 @@ function App() {
       path: 'data-management',
       children: [
         {
-          path: 'data-sources',
-          element: <DataSourcesPage />,
+          path: 'workspaces',
+          element: <WorkspacesPage />,
         },
         {
-          path: 'data-catalog',
-          element: <DataCatalogPage />,
+          path: 'stores',
+          element: <StoresPage />,
         },
         {
-          path: 'data-collection',
-          element: <DataCollectionPage />,
-        },
-        {
-          path: 'data-analysis',
-          element: <DataCollectionPage />,
-        },
-        {
-          path: 'data-visualization',
-          element: <DataCollectionPage />,
-        },
-        {
-          path: 'data-report',
-          element: <DataCollectionPage />,
+          path: 'layers',
+          element: <LayersPage />,
         },
       ],
     },
     { path: 'about', element: <AboutPage /> },
-    { path: 'other-tools', element: <OtherToolsPage /> },
   ]);
 
   return routes;

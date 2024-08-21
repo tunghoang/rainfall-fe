@@ -12,28 +12,130 @@ export const siteConfig = {
       label: "DATA MANAGEMENT",
       subItems: [
         {
-          label: "DATA SOURCES",
-          href: "/data-management/data-sources",
+          label: "WORKSPACES",
+          name: "Workspaces",
+          href: "/data-management/workspaces",
+          dataConfig: [
+              {
+                key: 'name',
+                label: 'Workspace Name',
+                isColumn: true,
+                isCreate: true,
+                inputType: 'text',
+              },
+              {
+                key: 'default',
+                label: 'Default',
+                isColumn: true,
+                isCreate: true,
+                inputType: 'checkbox',
+              },
+              {
+                key: 'isolated',
+                label: 'Isolated',
+                isColumn: true,
+                isCreate: true,
+                inputType: 'checkbox',
+              },
+          ]
         },
         {
-          label: "DATA CATALOG",
-          href: "/data-management/data-catalog",
+          label: "STORES",
+          name: "Stores",
+          href: "/data-management/stores",
+          dataConfig: [
+            {
+              key: 'dataType',
+              label: 'Data Type',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            },
+            {
+              key: 'workspace',
+              label: 'Workspace',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            },
+            {
+              key: 'storeName',
+              label: 'Store Name',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            },
+            {
+              key: 'type',
+              label: 'Type',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            },
+            {
+              key: 'enabled',
+              label: 'Enabled',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'checkbox',
+            },
+            {
+              key: 'url',
+              label: 'Connection Parameters',
+              inputType: 'file',
+              isColumn: false,
+              isCreate: true,
+            },
+        ]
         },
         {
-          label: "DATA COLLECTION",
-          href: "/data-management/data-collection",
-        },
-        {
-          label: "DATA ANALYSIS",
-          href: "/data-management/data-analysis",
-        },
-        {
-          label: "DATA VISUALIZATION",
-          href: "/data-management/data-visualization",
-        },
-        {
-          label: "DATA REPORT",
-          href: "/data-management/data-report",
+          label: "LAYERS",
+          name: "Layers",
+          href: "/data-management/layers",
+          dataConfig: [
+            {
+              key: 'type',
+              label: 'Type',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            },
+            {
+              key: 'title',
+              label: 'Title',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            },
+            {
+              key: 'name',
+              label: 'Name',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            },
+            {
+              key: 'store',
+              label: 'Store',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            },
+            {
+              key: 'enabled',
+              label: 'Enabled',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'checkbox',
+            },
+            {
+              key: 'nativeSRS',
+              label: 'Native SRS',
+              isColumn: true,
+              isCreate: true,
+              inputType: 'text',
+            }
+          ] 
         },
       ]
     },
@@ -44,10 +146,6 @@ export const siteConfig = {
     {
       label: "ABOUT",
       href: "/about",
-    },
-    {
-      label: "OTHER TOOLS",
-      href: "/other-tools",
     },
   ],
   navMenuItems: [
