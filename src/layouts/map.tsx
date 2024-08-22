@@ -1,10 +1,5 @@
-import { Navbar } from '@/components/Navbar';
+import 'leaflet/dist/leaflet.css';
 
 export default function MapLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className='relative flex flex-col h-screen'>
-      <Navbar />
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 }

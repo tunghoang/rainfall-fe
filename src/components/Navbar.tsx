@@ -1,4 +1,3 @@
-import { Link } from '@nextui-org/link';
 import {
   Navbar as NextUINavbar,
   NavbarBrand,
@@ -15,6 +14,7 @@ import clsx from 'clsx';
 import { siteConfig } from '@/config/site';
 import { ChevronDown, SearchIcon, UserIcon } from '@/components/icons';
 import { Logo } from '@/components/icons';
+import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
   return (
@@ -31,7 +31,7 @@ export const Navbar = () => {
           <Link
             className='flex justify-start items-center gap-1'
             color='foreground'
-            href='/'
+            to='/'
           >
             <Logo />
             <p className='font-bold text-inherit text-sm'>ACME</p>
@@ -72,7 +72,7 @@ export const Navbar = () => {
                           'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm'
                         )}
                         color='foreground'
-                        href={subItem.href}
+                        to={subItem.href}
                       >
                         {subItem.label}
                       </Link>
@@ -88,7 +88,7 @@ export const Navbar = () => {
                     'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm'
                   )}
                   color='foreground'
-                  href={item.href}
+                  to={item.href}
                 >
                   {item.label}
                 </Link>
@@ -118,8 +118,8 @@ export const Navbar = () => {
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 color={'foreground'}
-                href='#'
-                size='lg'
+                to='#'
+                // size='lg'
               >
                 {item.label}
               </Link>
