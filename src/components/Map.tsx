@@ -12,6 +12,7 @@ import { CustomSlider } from './CustomSlider';
 import { LocationDataCard } from './LocationDataCard';
 import { FeatureDataCard } from './FeatureDataCard';
 import { createContext, useEffect, useState } from 'react';
+import { siteConfig } from '@/config/site';
 
 export const SliderContext = createContext<{
   stepSlider: number;
@@ -27,6 +28,8 @@ const calculateScale = (zoom: number, latitude: number) => {
 const DEFAULT_ZOOM = 6;
 
 export const Map = () => {
+  const listLayers = siteConfig.navItems[1].subItems?.map((item) => item.name);
+
   const [stepSlider, setStepSlider] = useState(1);
   const [scale, setScale] = useState<number>();
 
@@ -74,20 +77,22 @@ export const Map = () => {
         <TileLayer url={'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'} />
         <ZoomControl position='topleft' />
         <LayersControl position='topleft'>
-          <LayersControl.Overlay
-            name='PVOUT'
-            checked={true}
-          >
-            <LayerGroup key={stepSlider}>
-              <WMSTileLayer
-                url='http://localhost:8080/geoserver/GeoTIFF/wms'
-                layers={`GeoTIFF:PVOUT_0${1 + (stepSlider % 6)}`}
-                format='image/png'
-                transparent={true}
-                version='1.1.0'
-              />
-            </LayerGroup>
-          </LayersControl.Overlay>
+          {listLayers?.map((layer) => (
+            <LayersControl.Overlay
+              name={layer}
+              checked={false}
+            >
+              <LayerGroup key={stepSlider}>
+                <WMSTileLayer
+                  url='http://localhost:8080/geoserver/GeoTIFF/wms'
+                  layers={`GeoTIFF:PVOUT_0${1 + (stepSlider % 6)}`}
+                  format='image/png'
+                  transparent={true}
+                  version='1.1.0'
+                />
+              </LayerGroup>
+            </LayersControl.Overlay>
+          ))}
         </LayersControl>
         <EnforceBounds />
         <div className='absolute top-10 right-10 z-[1000]'>

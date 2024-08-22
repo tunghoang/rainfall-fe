@@ -59,7 +59,6 @@ export const Navbar = () => {
                 </NavbarItem>
                 <DropdownMenu
                   aria-label='ACME features'
-                  // className='w-[340px]'
                   // itemClasses={{
                   //   base: 'gap-4',
                   // }}
@@ -69,7 +68,7 @@ export const Navbar = () => {
                       <Link
                         className={clsx(
                           linkStyles({ color: 'foreground' }),
-                          'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm'
+                          'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm pr-16'
                         )}
                         color='foreground'
                         to={subItem.href}

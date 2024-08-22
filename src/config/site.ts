@@ -86,6 +86,13 @@ export const siteConfig = {
               isColumn: false,
               isCreate: true,
             },
+            {
+              key: 'actions',
+              label: 'Actions',
+              // inputType: 'file',
+              isColumn: true,
+              isCreate: false,
+            },
         ]
         },
         {
