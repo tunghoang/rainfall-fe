@@ -17,7 +17,7 @@ export const CreateModal = () => {
         className='mr-2'
         onPress={onOpen}
       >
-        Add new {name.toLowerCase().slice(0, -1)}
+        Add new {name.toLowerCase()}
       </Button>
       <Modal
         isOpen={isOpen}
@@ -32,7 +32,7 @@ export const CreateModal = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className='flex flex-col gap-1'>Add new {name.toLowerCase().slice(0, -1)}</ModalHeader>
+              <ModalHeader className='flex flex-col gap-1'>Add new {name.toLowerCase()}</ModalHeader>
               <ModalBody>
                 <div className=''>
                   {createInputs.map((column) => (

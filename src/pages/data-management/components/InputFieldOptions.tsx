@@ -1,6 +1,15 @@
-import { Checkbox, Input, InputProps, CheckboxProps } from '@nextui-org/react';
+import {
+  Checkbox,
+  Input,
+  InputProps,
+  CheckboxProps,
+  DatePicker,
+  DatePickerProps,
+  Autocomplete,
+  AutocompleteItem,
+} from '@nextui-org/react';
 
-export type InputOptionsType = 'text' | 'checkbox' | 'file';
+export type InputOptionsType = 'text' | 'checkbox' | 'file' | 'date-time' | 'autocomplete';
 
 interface InputFieldOptionsProps {
   type: InputOptionsType;
@@ -23,26 +32,48 @@ export const InputFieldOptions = ({ type, label, ...props }: InputFieldOptionsPr
       return (
         <Checkbox
           {...(props as CheckboxProps)}
-          className='mb-4 block'
+          className='mb-4'
         >
           {label}
         </Checkbox>
       );
+    case 'date-time':
+      return (
+        <DatePicker
+          {...(props as DatePickerProps)}
+          label={label}
+          className='mb-4'
+        />
+      );
     case 'file':
       return (
         <>
-          {/* <Input
-            label={label}
-            variant='bordered'
-            type='text'
-            className='mb-4'
-          /> */}
           <p className='text-sm'>{label}</p>
           <Input
             type='file'
             className='mb-4'
           />
         </>
+      );
+    case 'autocomplete':
+      return (
+        <Autocomplete
+          label='Select frequency'
+          className='mb-4'
+        >
+          <AutocompleteItem
+            key='hour'
+            value='hour'
+          >
+            1 hours
+          </AutocompleteItem>
+          <AutocompleteItem
+            key='day'
+            value='daily'
+          >
+            1 day
+          </AutocompleteItem>
+        </Autocomplete>
       );
     default:
       return <Input {...(props as InputProps)} />;

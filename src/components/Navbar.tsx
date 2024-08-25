@@ -59,6 +59,7 @@ export const Navbar = () => {
                 </NavbarItem>
                 <DropdownMenu
                   aria-label='ACME features'
+                  className='h-96 overflow-y-auto'
                   // itemClasses={{
                   //   base: 'gap-4',
                   // }}

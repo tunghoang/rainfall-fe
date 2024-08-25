@@ -4,9 +4,8 @@ import HomePage from '@/pages/HomePage';
 import MapPage from './pages/MapPage';
 import DashboardPage from '@/pages/DashboardPage';
 import AboutPage from '@/pages/AboutPage';
-import WorkspacesPage from './pages/data-management/WorkspacesPage';
-import LayersPage from './pages/data-management/LayersPage';
-import StoresPage from './pages/data-management/StoresPage';
+import { dataManagementNavItems } from './config/data-management.config';
+import DataSourcesPage from './pages/data-management/DataSourcePage';
 
 function RoutesPage() {
   const routes = useRoutes([
@@ -15,20 +14,12 @@ function RoutesPage() {
     { path: 'dashboard', element: <DashboardPage /> },
     {
       path: 'data-management',
-      children: [
-        {
-          path: 'workspaces',
-          element: <WorkspacesPage />,
-        },
-        {
-          path: 'stores',
-          element: <StoresPage />,
-        },
-        {
-          path: 'layers',
-          element: <LayersPage />,
-        },
-      ],
+      children: dataManagementNavItems.subItems.map((item) => {
+        return {
+          path: item.href.slice(item.href.lastIndexOf('/') + 1, item.href.length),
+          element: <DataSourcesPage />,
+        };
+      }),
     },
     { path: 'about', element: <AboutPage /> },
     { path: '*', element: <HomePage /> },

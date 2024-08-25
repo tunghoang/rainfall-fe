@@ -21,10 +21,6 @@ export default function BasePage({ rows }: { rows: any[] }) {
       <section className='flex flex-col items-center justify-center gap-4 py-8 md:py-10'>
         <h1 className='text-2xl font-bold text-left w-full'>{name}</h1>
         <div className='flex justify-between w-full'>
-          <div>
-            <CreateModal />
-            <DeleteModal />
-          </div>
           <Input
             classNames={{
               base: 'max-w-lg',
@@ -37,6 +33,10 @@ export default function BasePage({ rows }: { rows: any[] }) {
             startContent={<SearchIcon size={18} />}
             type='search'
           />
+          <div>
+            <CreateModal />
+            <DeleteModal />
+          </div>
         </div>
         <CustomTable
           rows={rows}

@@ -1,0 +1,135 @@
+
+// Create data body
+{
+  "datasetName": "Dataset Name",
+  "description": "description",
+  "resolution": "10 km",
+  "startTime": "2024-08-25T12:00:00Z",
+  "endTime": "2024-08-25T13:00:00Z",
+  "isAvailable": true,
+  "frequency": "hourly"
+}
+{
+  "datasetName": "Dataset Name",
+  "description": "description",
+  "resolution": "10 km",
+  "startTime": "2024-08-25T00:00:00Z",
+  "endTime": "2024-08-26T00:00:00Z",
+  "isAvailable": true,
+  "frequency": "daily"
+}
+
+// query params: page=1&pageSize=10&search=tungba
+// Response list data
+{
+  "message": "Success",
+  "statusCode": 200,
+  "result": {
+    "page": 1,
+    "pageSize": 10,
+    "total": 169,
+    "totalPage": 17,
+    "items": [
+      {
+        "key": "1",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "2",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "3",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "4",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "5",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "6",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "7",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "8",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "9",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      },
+      {
+        "key": "10",
+        "datasetName": "Dataset Name",
+        "description": "description",
+        "resolution": "10 km",
+        "startTime": "25/08/2024",
+        "endTime": "25/08/2024",
+        "isAvailable": "true",
+        "frequency": "1 day"
+      }
+    ]
+  }
+}
