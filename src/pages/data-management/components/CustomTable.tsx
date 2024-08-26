@@ -26,6 +26,10 @@ export const CustomTable = ({ rows, columns, page, totalPages }: IProps) => {
     const cellValue = item[columnKey];
 
     switch (columnKey) {
+      case 'isAvailable':
+        return cellValue ? 'Available' : 'Unavailable';
+      case 'description':
+        return cellValue || 'N/A';
       case 'actions':
         return (
           <div className='relative flex items-center gap-2'>
@@ -69,11 +73,23 @@ export const CustomTable = ({ rows, columns, page, totalPages }: IProps) => {
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
-      <TableBody items={rows}>
-        {(item) => (
-          <TableRow key={item.key}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>
-          // <TableRow key={item.key}>{(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}</TableRow>
-        )}
+      <TableBody
+        loadingContent='Loading...'
+        emptyContent='Loading...'
+        // emptyContent='No Data'
+        items={rows}
+      >
+        {(item) => {
+          return (
+            <TableRow
+              className={item.isAvailable ? 'ptable-row ptable-row-active' : 'ptable-row ptable-row-inactive'}
+              key={item.key}
+            >
+              {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+            </TableRow>
+            // <TableRow key={item.key}>{(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}</TableRow>
+          );
+        }}
       </TableBody>
     </Table>
   );

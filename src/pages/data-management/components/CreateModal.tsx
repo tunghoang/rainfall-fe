@@ -1,6 +1,7 @@
 import { useDataConfig } from '@/hooks/useDataConfig';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@nextui-org/react';
 import { InputFieldOptions, InputOptionsType } from './InputFieldOptions';
+import { postDataset } from '@/api';
 
 export const CreateModal = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -9,13 +10,21 @@ export const CreateModal = () => {
 
   const createInputs = dataConfig.filter((config) => config.isCreate);
 
+  const handlePostDataset = async () => {
+    try {
+      await postDataset('Name', 4, 'daily', new Date(), new File([], 'file'));
+    } catch {
+      console.log('Post dataset fail');
+    }
+  };
+
   return (
     <>
       <Button
         color='primary'
-        size='sm'
-        className='mr-2'
         onPress={onOpen}
+        // variant='light'
+        size='lg'
       >
         Add new {name.toLowerCase()}
       </Button>
@@ -54,7 +63,7 @@ export const CreateModal = () => {
                 </Button>
                 <Button
                   color='primary'
-                  onPress={onClose}
+                  onPress={handlePostDataset}
                 >
                   Create
                 </Button>

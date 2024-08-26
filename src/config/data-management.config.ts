@@ -14,22 +14,8 @@ const dataConfigBase = [
     inputType: 'text',
   },
   {
-    key: 'resolution',
-    label: 'Resolutions',
-    isColumn: true,
-    isCreate: true,
-    inputType: 'text',
-  },
-  {
-    key: 'startTime',
-    label: 'Start time',
-    isColumn: true,
-    isCreate: true,
-    inputType: 'date-time',
-  },
-  {
     key: 'endTime',
-    label: 'End time',
+    label: 'Time',
     isColumn: true,
     isCreate: true,
     inputType: 'date-time',
@@ -38,20 +24,26 @@ const dataConfigBase = [
     key: 'isAvailable',
     label: 'Available',
     isColumn: true,
-    isCreate: true,
+    isCreate: false,
     inputType: 'checkbox',
+  },
+  {
+    key: 'resolution',
+    label: 'Resolution',
+    isCreate: true,
+    inputType: 'resolution', 
   },
   {
     key: 'frequency',
     label: 'Frequency',
-    isColumn: true,
     isCreate: true,
-    inputType: 'autocomplete',
+    inputType: 'frequency', 
   },
   {
     key: 'actions',
     label: 'Actions',
     isColumn: true,
+    isCreate: false,
   },
   {
     key: 'file',
@@ -61,6 +53,30 @@ const dataConfigBase = [
     inputType: 'file'
   }
 ];
+
+export const dataTypes = {
+  hourly4: {
+    label: '4km hourly',
+    value: {
+      resolution: 4,
+      frequency: 'hourly'
+    }
+  },
+  hourly10: {
+    label: '10km hourly',
+    value: {
+      resolution: 10,
+      frequency: 'hourly'
+    }
+  },
+  daily10: {
+    label: '10km daily',
+    value: {
+      resolution: 10,
+      frequency: 'daily'
+    }
+  }
+}
 
 export const dataManagementNavItems =
 {

@@ -5,11 +5,11 @@ import {
   CheckboxProps,
   DatePicker,
   DatePickerProps,
-  Autocomplete,
-  AutocompleteItem,
+  Select,
+  SelectItem,
 } from '@nextui-org/react';
 
-export type InputOptionsType = 'text' | 'checkbox' | 'file' | 'date-time' | 'autocomplete';
+export type InputOptionsType = 'text' | 'checkbox' | 'file' | 'date-time' | 'autocomplete' | 'resolution' | 'frequency';
 
 interface InputFieldOptionsProps {
   type: InputOptionsType;
@@ -43,6 +43,7 @@ export const InputFieldOptions = ({ type, label, ...props }: InputFieldOptionsPr
           {...(props as DatePickerProps)}
           label={label}
           className='mb-4'
+          // value={new CalendarDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDay())}
         />
       );
     case 'file':
@@ -55,25 +56,45 @@ export const InputFieldOptions = ({ type, label, ...props }: InputFieldOptionsPr
           />
         </>
       );
-    case 'autocomplete':
+    case 'resolution':
       return (
-        <Autocomplete
-          label='Select frequency'
+        <Select
+          label='Select resolution'
           className='mb-4'
         >
-          <AutocompleteItem
+          <SelectItem
             key='hour'
             value='hour'
           >
-            1 hours
-          </AutocompleteItem>
-          <AutocompleteItem
+            4 km
+          </SelectItem>
+          <SelectItem
             key='day'
             value='daily'
           >
-            1 day
-          </AutocompleteItem>
-        </Autocomplete>
+            10 km
+          </SelectItem>
+        </Select>
+      );
+    case 'frequency':
+      return (
+        <Select
+          label='Select frequency'
+          className='mb-4'
+        >
+          <SelectItem
+            key='hour'
+            value='hourly'
+          >
+            hourly
+          </SelectItem>
+          <SelectItem
+            key='day'
+            value='daily'
+          >
+            daily
+          </SelectItem>
+        </Select>
       );
     default:
       return <Input {...(props as InputProps)} />;

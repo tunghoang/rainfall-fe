@@ -10,8 +10,9 @@ export const DeleteModal = () => {
     <>
       <Button
         color='danger'
-        size='sm'
         onPress={onOpenDelete}
+        variant='light'
+        size='lg'
       >
         Remove selected {name.toLowerCase()}
       </Button>
