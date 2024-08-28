@@ -1,18 +1,18 @@
-import { useDataConfig } from '@/hooks/useDataConfig';
+import { useDataConfigByUrl } from '@/hooks/useDataConfigByUrl';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@nextui-org/react';
 
 export const DeleteModal = () => {
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onOpenChange: onOpenChangeDelete } = useDisclosure();
 
-  const { name } = useDataConfig();
+  const { name } = useDataConfigByUrl();
 
   return (
     <>
       <Button
         color='danger'
         onPress={onOpenDelete}
-        variant='light'
-        size='lg'
+        variant='flat'
+        size='md'
       >
         Remove selected {name.toLowerCase()}
       </Button>

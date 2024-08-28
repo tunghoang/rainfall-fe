@@ -1,14 +1,15 @@
-import { useDataConfig } from '@/hooks/useDataConfig';
+import { useDataConfigByUrl } from '@/hooks/useDataConfigByUrl';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@nextui-org/react';
 import { InputFieldOptions, InputOptionsType } from './InputFieldOptions';
 import { postDataset } from '@/api';
+import { useCreateFormConfig } from '@/hooks/useCreateFormConfig';
 
 export const CreateModal = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const { name, dataConfig } = useDataConfig();
+  const { name } = useDataConfigByUrl();
 
-  const createInputs = dataConfig.filter((config) => config.isCreate);
+  const { createInputFields } = useCreateFormConfig();
 
   const handlePostDataset = async () => {
     try {
@@ -24,7 +25,7 @@ export const CreateModal = () => {
         color='primary'
         onPress={onOpen}
         // variant='light'
-        size='lg'
+        size='md'
       >
         Add new {name.toLowerCase()}
       </Button>
@@ -44,11 +45,14 @@ export const CreateModal = () => {
               <ModalHeader className='flex flex-col gap-1'>Add new {name.toLowerCase()}</ModalHeader>
               <ModalBody>
                 <div className=''>
-                  {createInputs.map((column) => (
+                  {createInputFields.map((inputField) => (
                     <InputFieldOptions
-                      type={column.inputType as InputOptionsType}
-                      label={column.label}
-                      key={column.key}
+                      key={inputField.key}
+                      type={inputField.createFormConfig?.inputType as InputOptionsType}
+                      label={inputField.createFormConfig?.label as string}
+                      metadata={inputField.createFormConfig?.metadata}
+                      isRequired={inputField.createFormConfig?.isRequired}
+                      isDisabled={inputField.createFormConfig?.isDisabled}
                     />
                   ))}
                 </div>

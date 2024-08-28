@@ -7,17 +7,24 @@ import {
   DatePickerProps,
   Select,
   SelectItem,
+  SelectProps,
 } from '@nextui-org/react';
+import { now, getLocalTimeZone } from '@internationalized/date';
+import { useDataConfigByUrl } from '@/hooks/useDataConfigByUrl';
 
-export type InputOptionsType = 'text' | 'checkbox' | 'file' | 'date-time' | 'autocomplete' | 'resolution' | 'frequency';
+export type InputOptionsType = 'text' | 'date-time' | 'checkbox' | 'select' | 'file';
 
-interface InputFieldOptionsProps {
+interface IProps {
   type: InputOptionsType;
   label: string;
+  metadata?: any;
 }
 
-// Merge props from Input and Checkbox based on the type
-export const InputFieldOptions = ({ type, label, ...props }: InputFieldOptionsProps & (InputProps | CheckboxProps)) => {
+export type InputFieldOptionsProps = IProps & (InputProps | DatePickerProps | CheckboxProps | SelectProps);
+
+export const InputFieldOptions = ({ type, label, metadata, ...props }: InputFieldOptionsProps) => {
+  const { name } = useDataConfigByUrl();
+
   switch (type) {
     case 'text':
       return (
@@ -26,16 +33,8 @@ export const InputFieldOptions = ({ type, label, ...props }: InputFieldOptionsPr
           label={label}
           variant='bordered'
           className='mb-4'
+          defaultValue={metadata?.isDataName ? name : ''}
         />
-      );
-    case 'checkbox':
-      return (
-        <Checkbox
-          {...(props as CheckboxProps)}
-          className='mb-4'
-        >
-          {label}
-        </Checkbox>
       );
     case 'date-time':
       return (
@@ -43,59 +42,53 @@ export const InputFieldOptions = ({ type, label, ...props }: InputFieldOptionsPr
           {...(props as DatePickerProps)}
           label={label}
           className='mb-4'
-          // value={new CalendarDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDay())}
+          hideTimeZone
+          showMonthAndYearPickers
+          isRequired
+          defaultValue={now(getLocalTimeZone())}
         />
+      );
+    case 'checkbox':
+      return (
+        <Checkbox
+          {...(props as CheckboxProps)}
+          className='mb-4'
+          checked
+        >
+          {label}
+        </Checkbox>
+      );
+    case 'select':
+      return (
+        <Select
+          {...(props as SelectProps)}
+          label='Select resolution'
+          isRequired
+          className='mb-4'
+          defaultSelectedKeys='all'
+        >
+          {metadata?.options?.map((option: any) => (
+            <SelectItem
+              key={option.key}
+              value={option.key}
+            >
+              {option.value}
+            </SelectItem>
+          ))}
+        </Select>
       );
     case 'file':
       return (
         <>
           <p className='text-sm'>{label}</p>
           <Input
+            {...(props as InputProps)}
             type='file'
             className='mb-4'
           />
         </>
       );
-    case 'resolution':
-      return (
-        <Select
-          label='Select resolution'
-          className='mb-4'
-        >
-          <SelectItem
-            key='hour'
-            value='hour'
-          >
-            4 km
-          </SelectItem>
-          <SelectItem
-            key='day'
-            value='daily'
-          >
-            10 km
-          </SelectItem>
-        </Select>
-      );
-    case 'frequency':
-      return (
-        <Select
-          label='Select frequency'
-          className='mb-4'
-        >
-          <SelectItem
-            key='hour'
-            value='hourly'
-          >
-            hourly
-          </SelectItem>
-          <SelectItem
-            key='day'
-            value='daily'
-          >
-            daily
-          </SelectItem>
-        </Select>
-      );
+
     default:
       return <Input {...(props as InputProps)} />;
   }

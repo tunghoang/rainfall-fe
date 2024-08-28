@@ -5,16 +5,9 @@ type siteConfigType = {
   label: string;
   name: string;
   href: string;
-  dataConfig: Array<{ 
-    key: string; 
-    label: string, 
-    isColumn: boolean,
-    isCreate: boolean,
-    inputType: string 
-  }>;
 }
 
-export const useDataConfig = (): siteConfigType => {
+export const useDataConfigByUrl = (): siteConfigType => {
   const { pathname } = useLocation();
 
   const subItems = dataManagementNavItems.subItems;
@@ -24,5 +17,5 @@ export const useDataConfig = (): siteConfigType => {
           return item;
         }
   }
-  return { label: '', name: '', href: '', dataConfig: [] };
+  return { label: '', name: '', href: ''};
 };

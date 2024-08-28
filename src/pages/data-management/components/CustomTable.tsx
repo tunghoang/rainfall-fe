@@ -1,14 +1,5 @@
 import { EditIcon } from '@/components/icons';
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Pagination,
-  Tooltip,
-} from '@nextui-org/react';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button } from '@nextui-org/react';
 import React from 'react';
 
 interface IProps {
@@ -32,21 +23,14 @@ export const CustomTable = ({ rows, columns, page, totalPages }: IProps) => {
         return cellValue || 'N/A';
       case 'actions':
         return (
-          <div className='relative flex items-center gap-2'>
-            <Tooltip content='Edit'>
-              <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
-                <EditIcon />
-              </span>
-            </Tooltip>
-            {/* <Tooltip
-              color='danger'
-              content='Delete'
-            >
-              <span className='text-lg text-danger cursor-pointer active:opacity-50'>
-                <DeleteIcon />
-              </span>
-            </Tooltip> */}
-          </div>
+          <Button
+            isIconOnly
+            size='sm'
+            variant='light'
+            className='text-lg text-default-400 cursor-pointer active:opacity-50'
+          >
+            <EditIcon />
+          </Button>
         );
       default:
         return cellValue;

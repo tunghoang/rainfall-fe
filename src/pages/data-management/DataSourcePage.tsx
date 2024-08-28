@@ -1,4 +1,4 @@
-import { useDataConfig } from '@/hooks/useDataConfig';
+import { useDataConfigByUrl } from '@/hooks/useDataConfigByUrl';
 import React from 'react';
 import { CreateModal } from './components/CreateModal';
 import { DeleteModal } from './components/DeleteModal';
@@ -6,12 +6,12 @@ import { dataTypes } from '@/config/data-management.config';
 
 import { getDatasets } from '../../api';
 import DefaultLayout from '@/layouts/default';
-import { Input, Select, SelectItem } from '@nextui-org/react';
-import { SearchIcon } from '@/components/icons';
+import { DateRangePicker, Select, SelectItem } from '@nextui-org/react';
 import { CustomTable } from './components/CustomTable';
+import { useColumnConfig } from '@/hooks/useColumnConfig';
 
 export default function DataSourcesPage() {
-  const { label, name: dataName } = useDataConfig();
+  const { label, name: dataName } = useDataConfigByUrl();
   const DEFAULT_DATA = [
     {
       key: '1',
@@ -30,7 +30,7 @@ export default function DataSourcesPage() {
       resolution: '10 km',
       startTime: '25/08/2024',
       endTime: '25/08/2024',
-      isAvailable: false,
+      isAvailable: true,
       frequency: '1 day',
     },
     {
@@ -40,7 +40,7 @@ export default function DataSourcesPage() {
       resolution: '10 km',
       startTime: '25/08/2024',
       endTime: '25/08/2024',
-      isAvailable: false,
+      isAvailable: true,
       frequency: '1 day',
     },
     {
@@ -50,7 +50,7 @@ export default function DataSourcesPage() {
       resolution: '10 km',
       startTime: '25/08/2024',
       endTime: '25/08/2024',
-      isAvailable: false,
+      isAvailable: true,
       frequency: '1 day',
     },
     {
@@ -80,7 +80,7 @@ export default function DataSourcesPage() {
       resolution: '10 km',
       startTime: '25/08/2024',
       endTime: '25/08/2024',
-      isAvailable: true,
+      isAvailable: false,
       frequency: '1 day',
     },
     {
@@ -90,7 +90,7 @@ export default function DataSourcesPage() {
       resolution: '10 km',
       startTime: '25/08/2024',
       endTime: '25/08/2024',
-      isAvailable: true,
+      isAvailable: false,
       frequency: '1 day',
     },
     {
@@ -115,9 +115,9 @@ export default function DataSourcesPage() {
     },
   ];
 
-  const { name, dataConfig } = useDataConfig();
+  const { name } = useDataConfigByUrl();
 
-  const columns = dataConfig.filter((config) => config.isColumn);
+  const { configColumns } = useColumnConfig();
 
   const [page] = React.useState(1);
   const pages = 100;
@@ -155,8 +155,9 @@ export default function DataSourcesPage() {
         <h1 className='text-2xl font-bold text-left w-full'>{name}</h1>
         <div className='flex justify-start gap-2.5 w-full'>
           <Select
-            label='Select data specs'
+            label='Data specs'
             className='max-w-40'
+            size='sm'
             defaultSelectedKeys={'all'}
           >
             {Object.keys(dataTypes).map((key) => {
@@ -172,7 +173,7 @@ export default function DataSourcesPage() {
               );
             })}
           </Select>
-          <Input
+          {/* <Input
             classNames={{
               base: 'max-w-lg',
               mainWrapper: 'h-full',
@@ -183,6 +184,11 @@ export default function DataSourcesPage() {
             size='sm'
             startContent={<SearchIcon size={18} />}
             type='search'
+          /> */}
+          <DateRangePicker
+            label='Time duration'
+            className='max-w-xs'
+            size='sm'
           />
           <div className='flex-1 flex justify-end gap-2.5 items-center '>
             <CreateModal />
@@ -191,7 +197,7 @@ export default function DataSourcesPage() {
         </div>
         <CustomTable
           rows={rows ?? []}
-          columns={columns}
+          columns={configColumns}
           page={page}
           totalPages={pages}
         />
