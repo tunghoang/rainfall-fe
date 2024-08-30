@@ -25,6 +25,7 @@ const calculateScale = (zoom: number, latitude: number) => {
 };
 
 const DEFAULT_ZOOM = 6;
+const GEOSERVER_BASE = 'http://localhost:8888/geoserver'
 
 export const Map = () => {
   const [stepSlider, setStepSlider] = useState(1);
@@ -80,8 +81,8 @@ export const Map = () => {
           >
             <LayerGroup key={stepSlider}>
               <WMSTileLayer
-                url='http://localhost:8080/geoserver/GeoTIFF/wms'
-                layers={`GeoTIFF:PVOUT_0${stepSlider % 6}`}
+                url={GEOSERVER_BASE + '/GeoTIFF/wms'}
+                layers={`GeoTIFF:PVOUT_0${1 + (stepSlider % 6)}`}
                 format='image/png'
                 transparent={true}
                 version='1.1.0'

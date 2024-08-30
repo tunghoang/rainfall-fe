@@ -9,20 +9,41 @@ export const siteConfig = {
       href: "/map",
     },
     {
+      label: "DATA MANAGEMENT",
+      subItems: [
+        {
+          label: "DATA SOURCES",
+          href: "/data-management/data-sources",
+        },
+        {
+          label: "DATA CATALOG",
+          href: "/data-management/data-catalog",
+        },
+        {
+          label: "DATA COLLECTION",
+          href: "/data-management/data-collection",
+        },
+        {
+          label: "DATA ANALYSIS",
+          href: "/data-management/data-analysis",
+        },
+        {
+          label: "DATA VISUALIZATION",
+          href: "/data-management/data-visualization",
+        },
+        {
+          label: "DATA REPORT",
+          href: "/data-management/data-report",
+        },
+      ]
+    },
+    {
       label: "DASHBOARD",
       href: "/dashboard",
     },
     {
-      label: "HELP",
-      href: "/help",
-    },
-    {
       label: "ABOUT",
       href: "/about",
-    },
-    {
-      label: "BLOG",
-      href: "/blog",
     },
     {
       label: "OTHER TOOLS",
@@ -31,27 +52,23 @@ export const siteConfig = {
   ],
   navMenuItems: [
     {
-      label: "Map",
+      label: "MAP",
       href: "/map",
     },
     {
-      label: "Dashboard",
+      label: "DATA MANAGEMENT",
+      href: "/data-management",
+    },
+    {
+      label: "DASHBOARD",
       href: "/dashboard",
     },
     {
-      label: "Help",
-      href: "/help",
-    },
-    {
-      label: "About",
+      label: "ABOUT",
       href: "/about",
     },
     {
-      label: "Blog",
-      href: "/blog",
-    },
-    {
-      label: "Other tools",
+      label: "OTHER TOOLS",
       href: "/other-tools",
     },
     {

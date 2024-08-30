@@ -9,8 +9,12 @@ export const CustomSlider = () => {
 
   const [displayDate, setDisplayDate] = useState<string>();
 
-  const startDate = new Date(2024, 7, 1);
-  const endDate = new Date(2024, 7, 31);
+  // const startDate = new Date();
+  // const endDate = new Date(2024, 8, 31);
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() + 7);
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 23);
 
   // Function to calculate the number of days between two dates
   const calculateDaysBetween = (start: Date, end: Date) => {
@@ -34,7 +38,7 @@ export const CustomSlider = () => {
 
   return (
     <div className='flex justify-center align-middle mb-4'>
-      <div className='flex flex-col align-middle justify-center p-2 pb-2 rounded-md transparent-base w-5/6'>
+      <div className='flex flex-col align-middle justify-center p-1.5 pb-0 rounded-md transparent-base w-5/6'>
         <div className='flex justify-between text-base'>
           <p>{format(startDate, 'dd/MM/yyyy')}</p>
           <p>
@@ -54,7 +58,7 @@ export const CustomSlider = () => {
               setStepSlider(value);
             }
           }}
-          className='py-1 rounded-lg'
+          className='pb-0.5 rounded-lg'
           classNames={{
             thumb: 'w-4 h-4',
           }}

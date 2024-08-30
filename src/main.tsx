@@ -8,7 +8,7 @@ import "@/styles/globals.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter basename='/rainfall'>
+    <BrowserRouter basename='/'>
       <Provider>
         <App />
       </Provider>
