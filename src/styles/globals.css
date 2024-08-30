@@ -13,3 +13,15 @@
 .card-content {
   @apply text-sm;
 }
+
+.ptable-row {
+
+}
+
+.ptable-row-active{
+  @apply text-green-800;
+}
+
+.ptable-row-inactive {
+  @apply bg-red-100 text-red-800;
+}

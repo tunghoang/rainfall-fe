@@ -1,3 +1,5 @@
+import { dataManagementNavItems } from "./data-management.config";
+
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
@@ -8,35 +10,7 @@ export const siteConfig = {
       label: "MAP",
       href: "/map",
     },
-    {
-      label: "DATA MANAGEMENT",
-      subItems: [
-        {
-          label: "DATA SOURCES",
-          href: "/data-management/data-sources",
-        },
-        {
-          label: "DATA CATALOG",
-          href: "/data-management/data-catalog",
-        },
-        {
-          label: "DATA COLLECTION",
-          href: "/data-management/data-collection",
-        },
-        {
-          label: "DATA ANALYSIS",
-          href: "/data-management/data-analysis",
-        },
-        {
-          label: "DATA VISUALIZATION",
-          href: "/data-management/data-visualization",
-        },
-        {
-          label: "DATA REPORT",
-          href: "/data-management/data-report",
-        },
-      ]
-    },
+    dataManagementNavItems,   
     {
       label: "DASHBOARD",
       href: "/dashboard",
@@ -44,10 +18,6 @@ export const siteConfig = {
     {
       label: "ABOUT",
       href: "/about",
-    },
-    {
-      label: "OTHER TOOLS",
-      href: "/other-tools",
     },
   ],
   navMenuItems: [
