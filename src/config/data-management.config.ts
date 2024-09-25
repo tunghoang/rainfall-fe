@@ -1,10 +1,10 @@
 export const dataConfigBase = [
   {
-    key: 'datasetName',
-    label: 'Dataset Name',
+    key: 'name',
+    label: 'Product',
     isColumn: true,
     createFormConfig: {
-      label: 'Dataset Name',
+      label: 'Product',
       inputType: 'text',
       isRequired: true,
       isDisabled: true,
@@ -44,11 +44,13 @@ export const dataConfigBase = [
         options: [
           {
             key: 'four',
-            value: '4 km',
+            value: 4,
+            label: '4 KM'
           },
           {
             key: 'ten',
-            value: '10 km'
+            value: 10,
+            label: '10 KM'
           }
         ]
       }

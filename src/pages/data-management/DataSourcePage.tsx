@@ -15,101 +15,91 @@ export default function DataSourcesPage() {
   const DEFAULT_DATA = [
     {
       key: '1',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: true,
       frequency: '1 day',
     },
     {
       key: '2',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: true,
       frequency: '1 day',
     },
     {
       key: '3',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: true,
       frequency: '1 day',
     },
     {
       key: '4',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: true,
       frequency: '1 day',
     },
     {
       key: '5',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: true,
       frequency: '1 day',
     },
     {
       key: '6',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: true,
       frequency: '1 day',
     },
     {
       key: '7',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: false,
       frequency: '1 day',
     },
     {
       key: '8',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: false,
       frequency: '1 day',
     },
     {
       key: '9',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: true,
       frequency: '1 day',
     },
     {
       key: '10',
-      datasetName: label,
+      name: label,
       description: '',
       resolution: '10 km',
-      startTime: '25/08/2024',
-      endTime: '25/08/2024',
+      time: '25/08/2024',
       isAvailable: true,
       frequency: '1 day',
     },
@@ -123,7 +113,7 @@ export default function DataSourcesPage() {
   const pages = 100;
 
   const [dataSpecs, setDataSpecs] = React.useState<string[]>([
-    `${dataTypes.hourly4.value.resolution}`,
+    dataTypes.hourly4.value.resolution,
     dataTypes.hourly4.value.frequency,
   ]);
 
@@ -134,7 +124,7 @@ export default function DataSourcesPage() {
       try {
         const result = await getDatasets(
           dataName,
-          Number(dataSpecs[0]),
+          dataSpecs[0],
           dataSpecs[1],
           undefined,
           undefined,
@@ -166,7 +156,7 @@ export default function DataSourcesPage() {
                 <SelectItem
                   key={key}
                   value={[`${item.value.resolution}`, item.value.frequency]}
-                  onClick={() => setDataSpecs([item.value.frequency, `${item.value.resolution}`])}
+                  onClick={() => setDataSpecs([item.value.resolution, item.value.frequency])}
                 >
                   {item.label ?? key}
                 </SelectItem>

@@ -9,7 +9,7 @@ import DataSourcesPage from './pages/data-management/DataSourcePage';
 
 function RoutesPage() {
   const routes = useRoutes([
-    { path: '/', element: <HomePage />, index: true },
+    { path: '/', element: <MapPage />, index: true },
     { path: 'map', element: <MapPage /> },
     { path: 'dashboard', element: <DashboardPage /> },
     {
@@ -22,7 +22,7 @@ function RoutesPage() {
       }),
     },
     { path: 'about', element: <AboutPage /> },
-    { path: '*', element: <HomePage /> },
+    { path: '*', element: <MapPage /> },
   ]);
 
   return routes;

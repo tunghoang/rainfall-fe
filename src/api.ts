@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-const BASE_URL = 'http://127.0.0.1:9000';
+const BASE_URL = 'http://127.0.0.1:8888/api';
 
 export const getDatasets = async (
   productName: string, 
