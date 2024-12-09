@@ -62,7 +62,7 @@ export const InputFieldOptions = ({ type, label, metadata, ...props }: InputFiel
       return (
         <Select
           {...(props as SelectProps)}
-          label='Select resolution'
+          label={label}
           isRequired
           className='mb-4'
           defaultSelectedKeys='all'

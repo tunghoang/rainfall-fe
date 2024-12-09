@@ -1,5 +1,8 @@
-import { EditIcon } from '@/components/icons';
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button } from '@nextui-org/react';
+import { EditIcon, DeleteIcon, SearchIcon } from '@/components/icons';
+import DownloadIcon from '@/icons/Download'
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button, useDisclosure } from '@nextui-org/react';
+//import { ConfirmationModal } from './ConfirmationModal'
+import { ConfirmationModal } from '@/dialogs/ConfirmationModal'
 import React from 'react';
 
 interface IProps {
@@ -8,12 +11,18 @@ interface IProps {
     key: string;
     label: string;
   }[];
-  page: number;
-  totalPages: number;
 }
 
-export const CustomTable = ({ rows, columns, page, totalPages }: IProps) => {
-  const renderCell = React.useCallback((item: any, columnKey: any) => {
+export const CustomTable = ({ rows, columns, 
+    selectedKeys, onSelectionChange, 
+    onItemDelete, 
+    onItemUpdate, 
+    onItemPreview,
+    onItemDownload }: IProps) => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  //const [ isOpen, onOpen ] = React.useState(false)
+  const [currentItem, setCurrentItem] = React.useState(null)
+  const renderCell = (item: any, columnKey: any) => {
     const cellValue = item[columnKey];
 
     switch (columnKey) {
@@ -22,36 +31,98 @@ export const CustomTable = ({ rows, columns, page, totalPages }: IProps) => {
       case 'description':
         return cellValue || 'N/A';
       case 'actions':
-        return (
+        return (<>
           <Button
             isIconOnly
             size='sm'
             variant='light'
-            className='text-lg text-default-400 cursor-pointer active:opacity-50'
+            color="primary"
+            onPress={()=> {
+                console.log("Edit")
+                onItemUpdate(item)
+            }}
+            className='text-lg opacity-75'
           >
-            <EditIcon />
+            <EditIcon size={16} stroke="currentColor" fill="currentColor" />
           </Button>
-        );
+          <Button
+            isIconOnly
+            size='sm'
+            variant='light'
+            color="primary"
+            className='text-lg opacity-75'
+            onPress={()=> {
+                console.log("Preview")
+                onItemPreview(item)
+            }}
+          >
+            <SearchIcon size={16} stroke="currentColor" fill="currentColor" />
+          </Button>
+          <Button
+            isIconOnly
+            size='sm'
+            variant='light'
+            color="primary"
+            className='text-lg opacity-75'
+            onPress={()=> {
+                console.log("Download")
+                onItemDownload(item)
+            }}
+          >
+            <DownloadIcon size={16} strokeWidth={20} stroke="currentColor" fill="currentColor" />
+          </Button>
+          <Button
+            color="danger"
+            isIconOnly
+            size='sm'
+            variant='light'
+            className='text-lg'
+            onPress={()=> {
+                console.log("Delete", item)
+                setCurrentItem(item)
+                onOpen()
+            }}
+          >
+            <DeleteIcon size={16}/>
+          </Button>
+        </>);
       default:
         return cellValue;
     }
-  }, []);
+  };
+
+  const [pageSize, setPageSize] = React.useState(23)
+  const [page, setPage] = React.useState(1)
+  const pages = React.useMemo(() => Math.ceil(rows.length / pageSize), [pageSize, rows]);
+
+  const visibleRows = React.useMemo(() => rows.slice((page - 1)*pageSize, Math.min(page*pageSize, rows.length)), [page, rows])
+
   return (
-    <Table
+    <Table aria-label="data table"
       color='primary'
       selectionMode='multiple'
-      bottomContent={
-        <div className='flex w-full justify-center'>
+      selectedKeys={selectedKeys}
+      onSelectionChange={onSelectionChange}
+      topContent={
+        <div className='flex w-full justify-end'>
           <Pagination
             isCompact
             showControls
             showShadow
             color='default'
             page={page}
-            total={totalPages}
-            // onChange={(page) => setPage(page)}
+            total={pages}
+            onChange={(page) => setPage(page)}
           />
         </div>
+      }
+      bottomContent={
+        <ConfirmationModal isOpen={isOpen} onOpenChange={onOpenChange} userData={currentItem}
+            onYes={(userData) => {
+              console.log("...", userData)
+              onItemDelete(userData)
+            }}
+        />
       }
     >
       <TableHeader columns={columns}>
@@ -61,7 +132,7 @@ export const CustomTable = ({ rows, columns, page, totalPages }: IProps) => {
         loadingContent='Loading...'
         emptyContent='Loading...'
         // emptyContent='No Data'
-        items={rows}
+        items={visibleRows}
       >
         {(item) => {
           return (

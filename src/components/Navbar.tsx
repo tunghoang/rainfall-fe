@@ -7,21 +7,115 @@ import {
   NavbarMenu,
   NavbarMenuItem,
 } from '@nextui-org/navbar';
-import { DropdownItem, DropdownTrigger, Dropdown, DropdownMenu } from '@nextui-org/react';
+import { DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Button, Autocomplete, AutocompleteItem,
+    useDisclosure } from '@nextui-org/react';
+import {useState, useMemo} from 'react';
 import { link as linkStyles } from '@nextui-org/theme';
 import clsx from 'clsx';
 
+import {jwtDecode} from 'jwt-decode'
 import { SiteConfig, siteConfig } from '@/config/site';
-import { ChevronDown, SearchIcon, UserIcon } from '@/components/icons';
+import { ChevronDown } from '@/components/icons';
 import { Logo } from '@/components/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-export const Navbar = () => {
+import _tr from "../translation"
+
+import SignIn from '../dialogs/SignIn'
+import SignInIcon from '../icons/SignIn'
+import SignOutIcon from '../icons/SignOut'
+import SearchIcon from '../icons/Search'
+import UserIcon from '../icons/User'
+
+import { dataManagementNavItems } from "../config/data-management.config";
+
+import { login } from "@/api"
+
+export const Navbar = ({token, setToken}) => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  //const __token = localStorage.getItem('token')
+  //const [ token, setToken ] = useState(__token)
+  let userName = useMemo(() => {
+    try {
+      if (token) {
+        const payload = jwtDecode(token);
+        return (<span>{payload.fullname} (<span className='text-xs italic font-serif'>{payload.email}</span>)</span>)
+      }
+    }
+    catch(e) {
+      localStorage.removeItem('token')
+      setToken(null)
+    }
+    return ''
+  }, [token])
+  let navigate = useNavigate()
+  const renderItem = (item) => {
+    if ('subItems' in item) {
+      return (
+        <Dropdown key={item.label}>
+          <NavbarItem>
+            <DropdownTrigger>
+              <div
+                className={clsx(
+                  linkStyles({ color: 'foreground' }),
+                  'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm cursor-pointer'
+                )}
+                color='foreground'
+              >
+                {item.label}
+                <span>
+                  <ChevronDown size={16} />
+                </span>
+              </div>
+            </DropdownTrigger>
+          </NavbarItem>
+          <DropdownMenu
+            className='max-h-96 overflow-y-auto'
+            // itemClasses={{
+            //   base: 'gap-4',
+            // }}
+          >
+            {item.subItems.map((subItem) => (
+              <DropdownItem key={subItem.href}>
+                <Link
+                  className={clsx(
+                    linkStyles({ color: 'foreground' }),
+                    'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm pr-16'
+                  )}
+                  color='foreground'
+                  to={subItem.href}
+                >
+                  {subItem.label}
+                </Link>
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
+      );
+    } 
+    else {
+      return (
+        <NavbarItem key={item.href} style={{lineHeight:2.2}}>
+          <Link
+            className={clsx(
+              linkStyles({ color: 'foreground' }),
+              'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm'
+            )}
+            color='foreground'
+            to={item.href}
+          >
+            {_tr(item.label)}
+          </Link>
+        </NavbarItem>
+      );
+    }
+  }
   return (
     <NextUINavbar
       maxWidth='xl'
       position='sticky'
-      className='bg-white shadow-md h-11'
+      style={{boxShadow: "0 1px 2px 1px #aaa", zIndex:60, background: '#8df'}}
+      className='bg-white shadow-md h-11 \'
       classNames={{
         wrapper: 'max-w-full',
       }}
@@ -34,103 +128,67 @@ export const Navbar = () => {
             to='/'
           >
             <Logo />
-            <p className='font-bold text-inherit text-sm'>ACME</p>
+            <p className='font-bold text-inherit text-sm'>INDRA</p>
           </Link>
         </NavbarBrand>
-        <div className='hidden lg:flex gap-8 justify-start ml-2'>
-          {siteConfig.navItems.map((item) => {
-            if ('subItems' in item) {
-              return (
-                <Dropdown key={item.label}>
-                  <NavbarItem>
-                    <DropdownTrigger>
-                      <div
-                        className={clsx(
-                          linkStyles({ color: 'foreground' }),
-                          'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm cursor-pointer'
-                        )}
-                        color='foreground'
-                      >
-                        {item.label}
-                        <span>
-                          <ChevronDown size={16} />
-                        </span>
-                      </div>
-                    </DropdownTrigger>
-                  </NavbarItem>
-                  <DropdownMenu
-                    aria-label='ACME features'
-                    className='h-96 overflow-y-auto'
-                    // itemClasses={{
-                    //   base: 'gap-4',
-                    // }}
-                  >
-                    {item.subItems.map((subItem) => (
-                      <DropdownItem key={subItem.href}>
-                        <Link
-                          className={clsx(
-                            linkStyles({ color: 'foreground' }),
-                            'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm pr-16'
-                          )}
-                          color='foreground'
-                          to={subItem.href}
-                        >
-                          {subItem.label}
-                        </Link>
-                      </DropdownItem>
-                    ))}
-                  </DropdownMenu>
-                </Dropdown>
-              );
-            } else {
-              return (
-                <NavbarItem key={item.href}>
-                  <Link
-                    className={clsx(
-                      linkStyles({ color: 'foreground' }),
-                      'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm'
-                    )}
-                    color='foreground'
-                    to={item.href}
-                  >
-                    {item.label}
-                  </Link>
+        <div className='hidden lg:flex gap-4 justify-start ml-2 items-center'>
+          {token?
+            (<>
+                {siteConfig.navItems.map((item) => renderItem(item))}
+                <NavbarItem>
+                    <Autocomplete placeholder="Search for a product" variant='faded' size='sm'
+                        aria-label='select product'
+                        startContent={<SearchIcon size={14} color="#121213" filled={false} />}
+                        defaultItems={dataManagementNavItems.subItems}
+                        className="w-80"
+                        classNames="w-80 bordered-small"
+                        onSelectionChange={(sel) => {
+                            if ( sel === null ) return
+                            console.log(sel);
+                            navigate(sel);
+                        }}
+                    >
+                        {(item) => <AutocompleteItem key={item.href}>{item.label||item.name}</AutocompleteItem>}
+                    </Autocomplete>
                 </NavbarItem>
-              );
-            }
-          })}
+            </>):
+            siteConfig.navItems.filter((item) => item.public).map((item) => renderItem(item))
+          }
         </div>
       </NavbarContent>
 
-      <NavbarContent justify='end'>
+      <NavbarContent justify='end' className="gap-0">
+        {token?<>
         <NavbarItem>
-          <div className='p-2 rounded-full cursor-pointer'>
-            <SearchIcon />
+          <div className="py-2 cursor-pointer">
+            <Button radius='none' variant='light' className="px-0">
+              <UserIcon style={{display: 'inline-block'}} filled={false}/><span>{userName}</span>
+            </Button>
           </div>
         </NavbarItem>
         <NavbarItem>
-          <div className='p-2 rounded-full cursor-pointer'>
-            <UserIcon />
+          <div className='py-2 cursor-pointer'>
+            <Button radius='none' isIconOnly variant='light' className="px-0" onPress={()=> {
+                localStorage.removeItem('token')
+                setToken(null)
+                console.log('Sign out')
+                navigate('/')
+            }}><SignOutIcon /></Button>
           </div>
-        </NavbarItem>
+        </NavbarItem></> : <NavbarItem>
+          <div className='py-2 cursor-pointer'>
+            <Button radius='none' isIconOnly variant="light" onPress={onOpen} className="px-0" ><SignInIcon /></Button>
+            <SignIn isOpen={isOpen} onOpenChange={onOpenChange} onLogin={async function(username, password) {
+                console.log(username, password);
+                const payload = await login(username, password)
+                localStorage.setItem('token', payload.access_token);
+                setToken(payload.access_token);
+            }}/>
+          </div>
+        </NavbarItem>}
         <NavbarMenuToggle className='lg:hidden' />
       </NavbarContent>
 
-      <NavbarMenu>
-        <div className='mx-4 mt-2 flex flex-col gap-2'>
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={'foreground'}
-                to='#'
-                // size='lg'
-              >
-                {item.label}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </div>
-      </NavbarMenu>
     </NextUINavbar>
   );
 };

@@ -13,9 +13,9 @@ export const useDataConfigByUrl = (): siteConfigType => {
   const subItems = dataManagementNavItems.subItems;
 
   for (const item of subItems) {
-        if (item.href === pathname) {
-          return item;
-        }
+    if (item.href === pathname) {
+      return item;
+    }
   }
   return { label: '', name: '', href: ''};
 };

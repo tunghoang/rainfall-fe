@@ -1,6 +1,9 @@
 import { toast } from "react-toastify";
 
-const BASE_URL = 'http://127.0.0.1:8888/api';
+import {formatDate, formatDateTime, toISOStringWithTimezone} from "@/utils"
+
+//const BASE_URL = 'http://127.0.0.1:8888/api';
+const BASE_URL = '/api';
 
 export const getDatasets = async (
   productName: string, 
@@ -17,11 +20,11 @@ export const getDatasets = async (
   const params = new URLSearchParams();
 
   if(fromTime) {
-    params.append('fromTime', fromTime.toISOString());
+    params.append('from_time', formatDate(fromTime));
   }
 
   if(toTime) {
-    params.append('toTime', toTime.toISOString());
+    params.append('to_time', formatDate(toTime));
   }
 
   const queryString = params.toString();
@@ -31,33 +34,42 @@ export const getDatasets = async (
   try {
     const response = await fetch(`${url}?${queryString}`);
     const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.detail)
+    }
     return data;
-  } catch {
-    toast.error('Failed to fetch data', { autoClose: 1000 });
+  } 
+  catch(err) {
+    toast.error(err.message, { autoClose: 1000 });
     return mockData || [];
   }
 
 }
 
 export const postDataset = async (
-  productName: string,
-  resolution: number,
+  product: string,
+  resolution: string,
   frequency: string,
   time: Date,
-  img: File
+  img: File,
+  token: string
 ) => {
+  const _token = token || localStorage.getItem('token')
   const url = `${BASE_URL}/datasets`;
 
   const formData = new FormData();
-  formData.append('productName', productName);
+  formData.append('product', product);
   formData.append('resolution', resolution.toString());
   formData.append('frequency', frequency);
-  formData.append('time', time.toISOString());
+  formData.append('time', toISOStringWithTimezone(time));
   formData.append('img', img);
 
   try {
     const response = await fetch(url, {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${_token}`
+      },
       body: formData,
     });
     const data = await response.json();
@@ -66,4 +78,182 @@ export const postDataset = async (
     toast.error('Failed to create dataset', {autoClose: 2000});
     throw new Error('Failed to create dataset');
   }
+}
+
+export const deleteDatasets = async (ids: string[], token: string) => {
+  const _token = token || localStorage.getItem('token')
+  const url = `${BASE_URL}/datasets`;
+  try {
+    const response = await fetch(url, {
+      method: 'DELETE',
+      body: JSON.stringify({ids}),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${_token}`
+      }
+    });
+    const data = await response.json()
+    if (response.status !== 200) {
+        throw new Error(response.statusText)
+    }
+    toast.success('Success')
+  }
+  catch(e) {
+    toast.error(e.message)
+  }
+}
+
+export const downloadDataset = async (id_: string) => {
+  const url = `${BASE_URL}/datasets/download/${id_}`
+  try {
+    const response = await fetch(url)
+    const blob = await response.blob()
+    const _url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = _url
+    a.download = `${id_}.tif`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  }
+  catch(e) {
+    toast.error(e.message)
+    throw e
+  }
+}
+
+export const downloadDatasetRaw = async (id_: string) => {
+  const url = `${BASE_URL}/datasets/download/${id_}`
+  try {
+    const response = await fetch(url)
+    return response
+  }
+  catch(e) {
+    toast.error(e.message)
+    throw e
+  }
+}
+
+export const downloadDatasetRaw1 = async (product: string, resolution:int, frequency:string, time:Date) => {
+  const url = `${BASE_URL}/datasets/download/${product}/${resolution}/${frequency}/${formatDateTime(time)}`
+  try {
+    const response = await fetch(url)
+    return response
+  }
+  catch(e) {
+    toast.error(e.message)
+    throw e
+  }
+}
+
+export const getDateTimeLimits = async (product: string, resolution: string, frequency: string) => {
+  const url = `${BASE_URL}/datasets/time_limits/${product}/${resolution}/${frequency}`
+  try {
+    const response = await fetch(url)
+    const limits = await response.json();
+    return limits
+  }
+  catch(e) {
+    toast.error(e.message)
+    throw e
+  }
+}
+
+export const login = async (username, password) => {
+    const url = `${BASE_URL}/users/login`
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({
+                u: username,
+                p: password
+            }),
+        });
+
+        const payload = await response.json();
+        return payload
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+
+export const listUsers = async (limit, offset, token) => {
+    const _token = token || localStorage.getItem('token')
+    const url = `${BASE_URL}/users?limit=${limit}&offset=${offset}`
+    try {
+        if (!_token || _token === 'undefined' || _token === 'null') {
+            throw new Error('User not logged in')
+        }
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${_token}`
+            }, 
+        });
+
+        const payload = await response.json();
+        return payload
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+
+export const newUser = async (user, token) => {
+    const _token = token || localStorage.getItem('token')
+    const url = `${BASE_URL}/users`
+    try {
+        if (!_token || _token === 'undefined' || _token === 'null') {
+            throw new Error('User not logged in')
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${_token}`
+            }, 
+            body: JSON.stringify(user)
+        });
+
+        const payload = await response.json();
+        return payload
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+export const deleteUsers = async (userIds, token) => {
+    const _token = token || localStorage.getItem('token')
+    const url = `${BASE_URL}/users`
+    try {
+        if (!_token || _token === 'undefined' || _token === 'null') {
+            throw new Error('User not logged in')
+        }
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${_token}`
+            }, 
+            body: JSON.stringify({userIds: userIds})
+        });
+
+        const payload = await response.json();
+        return payload
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
 }

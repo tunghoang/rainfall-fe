@@ -4,13 +4,24 @@ import { InputFieldOptions, InputOptionsType } from './InputFieldOptions';
 import { postDataset } from '@/api';
 import { useCreateFormConfig } from '@/hooks/useCreateFormConfig';
 
-export const CreateModal = () => {
+import PlusIcon from '@/icons/Plus'
+
+import {useState} from 'react'
+
+export const CreateModal = ({onCreate}) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const { name } = useDataConfigByUrl();
 
   const { createInputFields } = useCreateFormConfig();
 
+  const [ instance, setInstance ] = useState({
+    name: '',
+    resolution: 4,
+    frequency: 'daily',
+    time: new Date(),
+    file: null
+  })
   const handlePostDataset = async () => {
     try {
       await postDataset('Name', 4, 'daily', new Date(), new File([], 'file'));
@@ -24,10 +35,10 @@ export const CreateModal = () => {
       <Button
         color='primary'
         onPress={onOpen}
-        // variant='light'
+        variant='light'
         size='md'
       >
-        Add new {name.toLowerCase()}
+        <PlusIcon />{" "}Add New {name}
       </Button>
       <Modal
         isOpen={isOpen}
@@ -42,7 +53,7 @@ export const CreateModal = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className='flex flex-col gap-1'>Add new {name.toLowerCase()}</ModalHeader>
+              <ModalHeader className='flex flex-col gap-1'>Add new {name}</ModalHeader>
               <ModalBody>
                 <div className=''>
                   {createInputFields.map((inputField) => (
@@ -58,19 +69,8 @@ export const CreateModal = () => {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button
-                  color='danger'
-                  variant='flat'
-                  onPress={onClose}
-                >
-                  Close
-                </Button>
-                <Button
-                  color='primary'
-                  onPress={handlePostDataset}
-                >
-                  Create
-                </Button>
+                <Button variant='flat' color='primary' onPress={() => onCreate("Hic hic")} >Create</Button>
+                <Button variant='flat' onPress={onClose} > Close </Button>
               </ModalFooter>
             </>
           )}
