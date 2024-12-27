@@ -1,6 +1,6 @@
 import { EditIcon, DeleteIcon, SearchIcon } from '@/components/icons';
 import DownloadIcon from '@/icons/Download'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button, useDisclosure } from '@nextui-org/react';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button, Spinner, useDisclosure } from '@nextui-org/react';
 //import { ConfirmationModal } from './ConfirmationModal'
 import { ConfirmationModal } from '@/dialogs/ConfirmationModal'
 import React from 'react';
@@ -13,7 +13,7 @@ interface IProps {
   }[];
 }
 
-export const CustomTable = ({ rows, columns, 
+export const CustomTable = ({ rows, columns, loadingState,
     selectedKeys, onSelectionChange, 
     onItemDelete, 
     onItemUpdate, 
@@ -129,7 +129,8 @@ export const CustomTable = ({ rows, columns,
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
       <TableBody
-        loadingContent='Loading...'
+        isLoading={loadingState}
+        loadingContent={<Spinner label="Loading ..." />}
         emptyContent='Loading...'
         // emptyContent='No Data'
         items={visibleRows}

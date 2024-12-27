@@ -22,6 +22,8 @@ import { UserContext } from '@/App'
 export default function DataSourcesPage() {
   const token = React.useContext(UserContext)
 
+  const today = new Date()
+
   if (token === null || token === undefined || token === 'undefined' || token === 'null') {
     console.log('token', token)
     return (
@@ -50,6 +52,7 @@ export default function DataSourcesPage() {
 
   const { configColumns } = useColumnConfig();
 
+  const [loading, setLoading] = React.useState(false)
   const [dataSpecs, setDataSpecs] = React.useState<string[]>([
     dataTypes.hourly4.value.resolution,
     dataTypes.hourly4.value.frequency,
@@ -90,6 +93,8 @@ export default function DataSourcesPage() {
       try {
         const limits = await getDateTimeLimits(dataName, dataSpecs[RESOLUTION], dataSpecs[FREQUENCY])
         setDateLimits({min: new Date(limits.min), max: new Date(limits.max)})
+        console.log(limits)
+        setPeriod({start: parseDate(limits.min.substr(0, 10)), end: parseDate(limits.max.substr(0, 10))})
       }
       catch(e) {
         toast.error(e)
@@ -99,6 +104,8 @@ export default function DataSourcesPage() {
     getLimits()
   }, [dataName, dataSpecs])
   React.useEffect(() => {
+    setLoading(true)
+    setRows([])
     const fetchData = async () => {
       try {
         const result = await getDatasets(
@@ -109,8 +116,11 @@ export default function DataSourcesPage() {
           period.end.toDate(),
           DEFAULT_DATA
         );
+        setLoading(false)
+        toast.success(`${result.length} records loaded`, {position: 'bottom-right'})
         setRows(result);
       } catch (error) {
+        setLoadding(false)
         console.error('Failed to fetch data', error);
       }
     };
@@ -162,7 +172,7 @@ export default function DataSourcesPage() {
             label='Time duration'
             className='max-w-xs'
             minValue={parseDate('2019-01-01')}
-            maxValue={parseDate('2020-12-31')}
+            maxValue={parseDate(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)}
             size='sm'
             pageBehavior='single'
             visibleMonths={2}
@@ -185,6 +195,7 @@ export default function DataSourcesPage() {
           </div>
         </div>
         <CustomTable
+          loadingState={loading}
           selectedKeys={selectedKeys}
           onSelectionChange={setSelectedKeys}
           rows={rows ?? []}

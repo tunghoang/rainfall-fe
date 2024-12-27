@@ -9,7 +9,10 @@ const TRANSLATION_MAP = {
         "Enter email": "Hãy nhập email",
         "Password": "Mật khẩu",
         "Enter password": "Hãy nhập mật khẩu",
-        "Close": "Đóng"
+        "Close": "Đóng",
+        "USER MANAGEMENT": "QL TÀI KHOẢN",
+        "DATA MANAGEMENT": "QL DỮ LIỆU",
+        "DASHBOARD": "BẢNG PHÂN TÍCH"
     }
 }
 export default TRANSLATION_MAP

@@ -17,10 +17,29 @@
   @apply text-sm;
 }
 
+.button-normal {
+  @apply bg-white text-gray-700;
+}
+.button-highlighted {
+  @apply bg-primary text-white;
+}
+
 .ptable-row {
 
 }
 
+nav li.menu-item:hover {
+    background: rgb(220, 220, 220);
+}
+nav li.menu-item[data-active=true] {
+    @apply text-secondary;
+}
+nav li.menu-item.admin-item[data-active=true] {
+    @apply text-primary;
+}
+nav li.admin-item {
+    @apply min-w-28 text-primary;
+}
 .ptable-row-active{
   @apply text-green-800;
 }
@@ -29,3 +48,15 @@
   @apply bg-red-100 text-red-800;
 }
 
+.rain-data img {
+    filter: blur(15px);
+}
+.rain-data-7 img {
+    filter: blur(10px);
+}
+.rain-data-8 img {
+    filter: blur(15px);
+}
+.rain-data-9 img, .rain-data-10 img {
+    filter: blur(15px);
+}

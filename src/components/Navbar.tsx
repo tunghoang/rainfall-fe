@@ -17,7 +17,7 @@ import {jwtDecode} from 'jwt-decode'
 import { SiteConfig, siteConfig } from '@/config/site';
 import { ChevronDown } from '@/components/icons';
 import { Logo } from '@/components/icons';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import _tr from "../translation"
 
@@ -35,6 +35,7 @@ export const Navbar = ({token, setToken}) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   //const __token = localStorage.getItem('token')
   //const [ token, setToken ] = useState(__token)
+  const { pathname } = useLocation()
   let userName = useMemo(() => {
     try {
       if (token) {
@@ -53,7 +54,7 @@ export const Navbar = ({token, setToken}) => {
     if ('subItems' in item) {
       return (
         <Dropdown key={item.label}>
-          <NavbarItem>
+          <NavbarItem className='menu-item px-2'>
             <DropdownTrigger>
               <div
                 className={clsx(
@@ -62,7 +63,7 @@ export const Navbar = ({token, setToken}) => {
                 )}
                 color='foreground'
               >
-                {item.label}
+                {_tr(item.label)}
                 <span>
                   <ChevronDown size={16} />
                 </span>
@@ -95,12 +96,9 @@ export const Navbar = ({token, setToken}) => {
     } 
     else {
       return (
-        <NavbarItem key={item.href} style={{lineHeight:2.2}}>
+        <NavbarItem isActive={item.href === pathname} key={item.href} className='menu-item px-2' style={{lineHeight:2.2}}>
           <Link
-            className={clsx(
-              linkStyles({ color: 'foreground' }),
-              'data-[active=true]:text-primary data-[active=true]:font-medium font-medium text-sm'
-            )}
+            className='text-sm'
             color='foreground'
             to={item.href}
           >
@@ -114,7 +112,7 @@ export const Navbar = ({token, setToken}) => {
     <NextUINavbar
       maxWidth='xl'
       position='sticky'
-      style={{boxShadow: "0 1px 2px 1px #aaa", zIndex:60, background: '#8df'}}
+      style={{boxShadow: "0 1px 2px 1px #aaa", zIndex:60, /*background: '#8df'*/}}
       className='bg-white shadow-md h-11 \'
       classNames={{
         wrapper: 'max-w-full',
@@ -127,8 +125,8 @@ export const Navbar = ({token, setToken}) => {
             color='foreground'
             to='/'
           >
-            <Logo />
-            <p className='font-bold text-inherit text-sm'>INDRA</p>
+            <Logo style={{stroke:"blue", fill: "blue"}}/>
+            <p className='font-bold text-primary text-sm'>INDRA</p>
           </Link>
         </NavbarBrand>
         <div className='hidden lg:flex gap-4 justify-start ml-2 items-center'>
@@ -140,8 +138,8 @@ export const Navbar = ({token, setToken}) => {
                         aria-label='select product'
                         startContent={<SearchIcon size={14} color="#121213" filled={false} />}
                         defaultItems={dataManagementNavItems.subItems}
-                        className="w-80"
-                        classNames="w-80 bordered-small"
+                        className="w-60"
+                        classNames="w-60 bordered-small"
                         onSelectionChange={(sel) => {
                             if ( sel === null ) return
                             console.log(sel);
@@ -150,6 +148,11 @@ export const Navbar = ({token, setToken}) => {
                     >
                         {(item) => <AutocompleteItem key={item.href}>{item.label||item.name}</AutocompleteItem>}
                     </Autocomplete>
+                </NavbarItem>
+                <NavbarItem isActive={'/admin' === pathname} key='/admin' className='menu-item admin-item px-2' style={{lineHeight:2.2}} >
+                    <Link className='text-sm' color='foreground' to='/admin' >
+                        {_tr('Admin Zone')}
+                    </Link>
                 </NavbarItem>
             </>):
             siteConfig.navItems.filter((item) => item.public).map((item) => renderItem(item))

@@ -57,7 +57,7 @@ export const CustomSlider = ({endDate, startDate, onChange}) => {
   }, [startDate1, stepSlider]);
 
   return (
-    <div className='flex flex-col align-middle justify-center p-1.5 pb-0 transparent-base grow'>
+    <div className='flex flex-col align-middle justify-center p-1.5 pb-0 bg-white grow'>
       <div className='flex justify-between text-base'>
         <p>{format(startDate1, 'dd/MM/yyyy')}</p>
         <p>

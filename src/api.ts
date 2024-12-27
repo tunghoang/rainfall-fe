@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { debounce } from 'lodash'
 
 import {formatDate, formatDateTime, toISOStringWithTimezone} from "@/utils"
 
@@ -103,10 +104,19 @@ export const deleteDatasets = async (ids: string[], token: string) => {
   }
 }
 
-export const downloadDataset = async (id_: string) => {
+export const downloadDataset = async (id_: string, token) => {
   const url = `${BASE_URL}/datasets/download/${id_}`
   try {
-    const response = await fetch(url)
+    const _token = token || localStorage.getItem('token')
+    if (!_token || _token === 'undefined' || _token === 'null') {
+        throw new Error('User not logged in')
+    }
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${_token}`
+        }, 
+    });
     const blob = await response.blob()
     const _url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -247,6 +257,54 @@ export const deleteUsers = async (userIds, token) => {
                 'Authorization': `Bearer ${_token}`
             }, 
             body: JSON.stringify({userIds: userIds})
+        });
+
+        const payload = await response.json();
+        return payload
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+export const searchLocations = async (searchStr, cbFn, token) => {
+    const _token = token || localStorage.getItem('token')
+    const url = `${BASE_URL}/locations`
+    try {
+        if (!_token || _token === 'undefined' || _token === 'null') {
+            throw new Error('User not logged in')
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${_token}`
+            }, 
+            body: JSON.stringify({action: 'search', query: searchStr})
+        });
+
+        const payload = await response.json();
+        cbFn(payload)
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+export const debouncedSearchLocations = debounce(searchLocations, 1000)
+export const getLocation = async (gid, token) => {
+    const _token = token || localStorage.getItem('token')
+    const url = `/geoserver/gadm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=gadm%3Aau&outputFormat=application%2Fjson&featureId=au.${gid}`
+    try {
+        if (!_token || _token === 'undefined' || _token === 'null') {
+            throw new Error('User not logged in')
+        }
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
         });
 
         const payload = await response.json();
