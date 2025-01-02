@@ -27,7 +27,7 @@ function RoutesPage() {
       }),
     },
     { path: '/user', element: <UserManPage /> },
-    { path: 'about', element: <AboutPage /> },
+    { path: '/about', element: <AboutPage /> },
     { path: '/admin', element: <AdminZonePage /> },
     { path: '*', element: <MapPage /> },
   ]);

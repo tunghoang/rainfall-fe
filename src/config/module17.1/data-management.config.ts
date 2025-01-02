@@ -110,11 +110,11 @@ export const dataConfigBase = [
 ];
 
 export const dataTypes = {
-  daily10: {
-    label: '10km daily',
+  hourly4: {
+    label: '4km hourly',
     value: {
-      resolution: 10,
-      frequency: 'daily'
+      resolution: 4,
+      frequency: 'hourly'
     }
   },
   hourly10: {
@@ -124,11 +124,11 @@ export const dataTypes = {
       frequency: 'hourly'
     }
   },
-  hourly4: {
-    label: '4km hourly',
+  daily10: {
+    label: '10km daily',
     value: {
-      resolution: 4,
-      frequency: 'hourly'
+      resolution: 10,
+      frequency: 'daily'
     }
   }
 }
@@ -142,41 +142,6 @@ export const dataManagementNavItems = {
       href: "/data-management/deepModel",
       public: true,
       onMap: true
-    },
-    {
-      label: "IMERG_E",
-      name: "IMERG_E",
-      href: "/data-management/imerg_e",
-    },
-    {
-      label: "IMERG_L",
-      name: "IMERG_L",
-      href: "/data-management/imerg_l",
-    },
-    {
-      label: "IMERG_F",
-      name: "IMERG_F",
-      href: "/data-management/imerg_f",
-    },
-    {
-      label: "GSMaP",
-      name: "GSMaP",
-      href: "/data-management/gsmap",
-    },
-    {
-      label: "CCS",
-      name: "CCS",
-      href: "/data-management/ccs",
-    },
-    {
-      label: "FY4A",
-      name: "FY4A",
-      href: "/data-management/fy4a",
-    },
-    {
-      label: "Radar",
-      name: "Radar",
-      href: "/data-management/radar",
     },
     {
       label: "AWS",
@@ -193,104 +158,40 @@ export const dataManagementNavItems = {
       onMap: true
     },
     {
-      label: "CAPE",
-      name: "CAPE",
-      href: "/data-management/cape",
+      label: "IMERG_E",
+      name: "IMERG_E",
+      href: "/data-management/imerg_e",
+      public: true
     },
     {
-      label: "EWSS",
-      name: "EWSS",
-      href: "/data-management/ewss",
+      label: "IMERG_L",
+      name: "IMERG_L",
+      href: "/data-management/imerg_l",
+      public: true
     },
     {
-      label: "IE",
-      name: "IE",
-      href: "/data-management/ie",
+      label: "IMERG_F",
+      name: "IMERG_F",
+      href: "/data-management/imerg_f",
+      public: true
     },
     {
-      label: "ISOR",
-      name: "ISOR",
-      href: "/data-management/isor",
+      label: "GSMaP",
+      name: "GSMaP",
+      href: "/data-management/gsmap",
+      public: true
     },
     {
-      label: "KX",
-      name: "KX",
-      href: "/data-management/kx",
+      label: "CCS",
+      name: "CCS",
+      href: "/data-management/ccs",
+      public: true
     },
     {
-      label: "PEV",
-      name: "PEV",
-      href: "/data-management/pev",
-    },
-    {
-      label: "R250",
-      name: "R250",
-      href: "/data-management/r250",
-    },
-    {
-      label: "R500",
-      name: "R500",
-      href: "/data-management/r500",
-    },
-    {
-      label: "R850",
-      name: "R850",
-      href: "/data-management/r850",
-    },
-    {
-      label: "SLHF",
-      name: "SLHF",
-      href: "/data-management/slhf",
-    },
-    {
-      label: "SLOR",
-      name: "SLOR",
-      href: "/data-management/slor",
-    },
-    {
-      label: "SSHF",
-      name: "SSHF",
-      href: "/data-management/sshf",
-    },
-    {
-      label: "TCLW",
-      name: "TCLW",
-      href: "/data-management/tclw",
-    },
-    {
-      label: "TCW",
-      name: "TCW",
-      href: "/data-management/tcw",
-    },
-    {
-      label: "TCWV",
-      name: "TCWV",
-      href: "/data-management/tcwv",
-    },
-    {
-      label: "U250",
-      name: "U250",
-      href: "/data-management/u250",
-    },
-    {
-      label: "U850",
-      name: "U850",
-      href: "/data-management/u850",
-    },
-    {
-      label: "V250",
-      name: "V250",
-      href: "/data-management/v250",
-    },
-    {
-      label: "V850",
-      name: "V850",
-      href: "/data-management/v850",
-    },
-    {
-      label: "DEM",
-      name: "DEM",
-      href: "/data-management/dem",
-    },
+      label: "FY4A",
+      name: "FY4A",
+      href: "/data-management/fy4a",
+      public: true
+    }
   ]
 };

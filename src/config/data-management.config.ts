@@ -1,1 +1,1 @@
-export * from './all/data-management.config.ts'
+export * from './module17.1/data-management.config.ts'
