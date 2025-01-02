@@ -137,45 +137,60 @@ export const dataManagementNavItems = {
   label: "DATA MANAGEMENT",
   subItems: [
     {
+      label: "HIMAWARI",
+      name: "deepModel",
+      href: "/data-management/deepModel",
+      public: true,
+      onMap: true
+    },
+    {
+      label: "AWS",
+      name: "AWS",
+      href: "/data-management/aws",
+      public: true,
+      onMap: true
+    },
+    {
+      label: "integrated",
+      name: "integrated",
+      href: "/data-management/integrated",
+      public: true,
+      onMap: true
+    },
+    {
       label: "IMERG_E",
       name: "IMERG_E",
       href: "/data-management/imerg_e",
-      onMap: true,
       public: true
     },
     {
       label: "IMERG_L",
       name: "IMERG_L",
       href: "/data-management/imerg_l",
-      onMap: true,
       public: true
     },
     {
       label: "IMERG_F",
       name: "IMERG_F",
       href: "/data-management/imerg_f",
-      onMap: true,
       public: true
     },
     {
       label: "GSMaP",
       name: "GSMaP",
       href: "/data-management/gsmap",
-      onMap: true,
       public: true
     },
     {
       label: "CCS",
       name: "CCS",
       href: "/data-management/ccs",
-      onMap: true,
       public: true
     },
     {
       label: "FY4A",
       name: "FY4A",
       href: "/data-management/fy4a",
-      onMap: true,
       public: true
     }
   ]

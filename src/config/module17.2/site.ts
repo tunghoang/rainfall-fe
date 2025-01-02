@@ -8,8 +8,8 @@ export const siteConfig = {
   navItems: [
     {
       public: true,
-      label: "MAP",
-      href: "/map",
+      label: "DASHBOARD",
+      href: "/dashboard",
     }
   ],
 };

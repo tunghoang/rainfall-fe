@@ -14,7 +14,8 @@ function RoutesPage() {
   console.log(siteConfig.navItems)
   const routes = useRoutes([
     /*{ path: '/', element: <MapPage />, index: true },*/
-    { path: '/', element: <Navigate to={siteConfig.navItems[0].href==='/map'?siteConfig.navItems[0].href:dataManagementNavItems.subItems[0].href} />, index: true },
+    //{ path: '/', element: <Navigate to={siteConfig.navItems[0].href==='/map'?siteConfig.navItems[0].href:dataManagementNavItems.subItems[0].href} />, index: true },
+    { path: '/', element: <Navigate to={'/dashboard'} />, index: true },
     { path: 'map', element: <MapPage /> },
     { path: 'dashboard', element: <DashboardPage /> },
     {
