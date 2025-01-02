@@ -3,6 +3,7 @@ import { GeoJSON, useMapEvents } from 'react-leaflet';
 import { DEFAULT_ZOOM, MIN_ZOOM_SIZE_DISTRICT_LEVEL, MIN_ZOOM_SIZE_WARD_LEVEL } from '@/config/constant';
 import { useDisclosure } from '@nextui-org/react';
 //import { LocationDetailModal } from './LocationDetailModal';
+import { GEOSERVER_TOKEN } from '@/config/constant'
 
 import { createContext } from 'react';
 
@@ -35,33 +36,12 @@ export const FeatureLayer = ({bBox, setBBoxFn, zoom, setZoomFn, onHighlightedFea
     }
     const url = `/geoserver/gadm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=gadm%3Aau&maxFeatures=500&outputFormat=application%2Fjson&cql_filter=${cql_filter}%20and%20bbox(the_geom,${_bBox[0][0]},${_bBox[0][1]},${_bBox[1][0]},${_bBox[1][1]})`
     try {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      setFeatures(null);
-      setTimeout(() => setFeatures(data.features), 0);
-    } catch (error) {
-      console.error('Error fetching features:', error);
-    }
-  }
-  const fetchAllFeatures1 = async ( _zoom, _bBox ) => {
-    if (!_bBox || !_zoom) return
-    let layer = ''
-    if (_zoom < MIN_ZOOM_SIZE_DISTRICT_LEVEL) {
-      setGeopolygonLevel('province');
-      layer = 'gadm41_VNM_1'
-    } 
-    else if (_zoom < MIN_ZOOM_SIZE_WARD_LEVEL) {
-      setGeopolygonLevel('district');
-      layer = 'gadm41_VNM_2'
-    }
-    else {
-      setGeopolygonLevel('ward');
-      layer = 'gadm41_VNM_3'
-    }
-    const url = `/geoserver/gadm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=gadm%3A${layer}&maxFeatures=500&outputFormat=application%2Fjson&bbox=${_bBox[0][0]},${_bBox[0][1]},${_bBox[1][0]},${_bBox[1][1]}`
-    try {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            Authorization: 'Basic ' + GEOSERVER_TOKEN
+        }
+      });
       const data = await response.json();
 
       setFeatures(null);
@@ -131,7 +111,6 @@ export const FeatureLayer = ({bBox, setBBoxFn, zoom, setZoomFn, onHighlightedFea
             let toReturn = { ...cStyle }
             if(feature?.id === selectedFeature?.id) {
                 toReturn.fillOpacity = 0.6
-                console.log('toReturn', toReturn)
             }
             return toReturn
           }}

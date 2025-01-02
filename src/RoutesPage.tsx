@@ -4,6 +4,7 @@ import HomePage from '@/pages/HomePage';
 import MapPage from './pages/MapPage';
 import DashboardPage from '@/pages/DashboardPage';
 import AboutPage from '@/pages/AboutPage';
+import AdminZonePage from '@/pages/AdminZonePage';
 import UserManPage from '@/pages/UserManPage';
 import { siteConfig } from './config/site.ts'
 import { dataManagementNavItems } from './config/data-management.config';
@@ -27,6 +28,7 @@ function RoutesPage() {
     },
     { path: '/user', element: <UserManPage /> },
     { path: 'about', element: <AboutPage /> },
+    { path: '/admin', element: <AdminZonePage /> },
     { path: '*', element: <MapPage /> },
   ]);
 

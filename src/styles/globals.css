@@ -51,12 +51,7 @@ nav li.admin-item {
 .rain-data img {
     filter: blur(15px);
 }
-.rain-data-7 img {
-    filter: blur(10px);
-}
-.rain-data-8 img {
-    filter: blur(15px);
-}
-.rain-data-9 img, .rain-data-10 img {
-    filter: blur(15px);
+
+.width-limit {
+    min-width: 245px;
 }

@@ -110,11 +110,11 @@ export const dataConfigBase = [
 ];
 
 export const dataTypes = {
-  hourly4: {
-    label: '4km hourly',
+  daily10: {
+    label: '10km daily',
     value: {
-      resolution: 4,
-      frequency: 'hourly'
+      resolution: 10,
+      frequency: 'daily'
     }
   },
   hourly10: {
@@ -124,11 +124,11 @@ export const dataTypes = {
       frequency: 'hourly'
     }
   },
-  daily10: {
-    label: '10km daily',
+  hourly4: {
+    label: '4km hourly',
     value: {
-      resolution: 10,
-      frequency: 'daily'
+      resolution: 4,
+      frequency: 'hourly'
     }
   }
 }

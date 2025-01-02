@@ -10,7 +10,6 @@ export const CustomSlider = ({endDate, startDate, onChange}) => {
 
   const [displayDate, setDisplayDate] = useState<string>();
 
-  console.log("...", endDate);
   const endDate1 = useMemo(() => ( endDate || new Date() ), [endDate])
   const startDate1 = useMemo(() => {
     if ( startDate ) {
@@ -58,15 +57,13 @@ export const CustomSlider = ({endDate, startDate, onChange}) => {
 
   return (
     <div className='flex flex-col align-middle justify-center p-1.5 pb-0 bg-white grow'>
-      <div className='flex justify-between text-base'>
+      <div className='flex justify-between text-xs'>
         <p>{format(startDate1, 'dd/MM/yyyy')}</p>
-        <p>
-          {displayDate ? format(displayDate, 'dd/MM/yyyy') : ''} - {' '}
-          <span className='text-gray-500'>{format(endDate1, 'dd/MM/yyyy')}</span>
-        </p>
+        {displayDate ? <p className='bg-primary text-white px-2'>{format(displayDate, 'dd/MM/yyyy')} </p>: ''}
         <p>{format(endDate1, 'dd/MM/yyyy')}</p>
       </div>
       <Slider
+        aria-label="time-slider"
         size='sm'
         step={1}
         showSteps={true}

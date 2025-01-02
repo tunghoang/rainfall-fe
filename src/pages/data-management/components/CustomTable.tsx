@@ -32,7 +32,7 @@ export const CustomTable = ({ rows, columns, loadingState,
         return cellValue || 'N/A';
       case 'actions':
         return (<>
-          <Button
+          {/*<Button
             isIconOnly
             size='sm'
             variant='light'
@@ -44,7 +44,7 @@ export const CustomTable = ({ rows, columns, loadingState,
             className='text-lg opacity-75'
           >
             <EditIcon size={16} stroke="currentColor" fill="currentColor" />
-          </Button>
+          </Button>*/}
           <Button
             isIconOnly
             size='sm'

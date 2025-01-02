@@ -8,13 +8,17 @@ import {
   WMSTileLayer,
   ZoomControl,
 } from 'react-leaflet';
+import { RainDataLayer } from './RainDataLayer'
 import SearchIcon from '../icons/Search'
+import InfoIcon from '../icons/Info'
 import { LatLngBoundsLiteral } from 'leaflet';
 import { CustomSlider } from './CustomSlider';
 import { InfoStrip } from './InfoStrip';
 import { FeatureDataCard } from './FeatureDataCard';
 import { FeatureLayer } from './FeatureLayer';
+import { CountryBorderLayer } from './CountryBorderLayer';
 import { LocationSearch } from './LocationSearch';
+import { ColorScale } from './ColorScale';
 import { createContext, useEffect, useState, useContext, useMemo } from 'react';
 import { dataManagementNavItems } from '@/config/data-management.config'
 import { UserContext } from '@/App'
@@ -23,12 +27,13 @@ import { format } from 'date-fns';
 import { useSearchParams } from 'react-router-dom'
 import {DEFAULT_ZOOM, MIN_ZOOM_SIZE_DISTRICT_LEVEL, MIN_ZOOM_SIZE_WARD_LEVEL} from '@/config/constant';
 
-import {getDateTimeLimits} from '@/api'
+import {getDateTimeLimits, getDescription} from '@/api'
 
 import { 
     Button, 
     RadioGroup, Radio,
     Listbox, ListboxItem,
+    Tooltip,
     Divider
 } from '@nextui-org/react'
 
@@ -50,6 +55,10 @@ export const Map = () => {
   const token = useContext(UserContext)
   const [endDate, setEndDate] = useState()
 
+  const [openCnt, setOpenCnt] = useState(0)
+  const [productDescription, setProductDescription] = useState()
+
+  const [mouseLocation, setMouseLocation] = useState({ lat: 0, lng: 0 });
 
   const [locations, setLocations] = useState([])
   const [selectedLocation, setSelectedLocation] = useState()
@@ -80,9 +89,11 @@ export const Map = () => {
   const frequency = useMemo(() => resFreq.split('_')[1], [resFreq])
   const product = useMemo(() => (products.size > 0?Array.from(products)[0]:null), [products])
   const [timeStr, setTimeStr] = useState('20190101080000')
-  const layerUrl = useMemo(() => (`/singleband/${product}/${resolution}/${frequency}/${timeStr}/{z}/{x}/{y}.png?colormap=viridis&stretch_range=[0,4]`), [product, resolution, frequency, timeStr]) 
+  const [precipitation, setPrecipitation] = useState()
+  const [statsInfo, setStatsInfo] = useState({})
+  const layerUrl = useMemo(() => (`/singleband/${product}/${resolution}/${frequency}/${timeStr}/{z}/{x}/{y}.png?colormap=viridis&stretch_range=[0,15]`), [product, resolution, frequency, timeStr]) 
 
-  const BoundControl = ({updateCnt}) => {
+  const BoundControl = () => {
     map = useMapEvent('moveend', () => {
       const bounds = map.getBounds();
       const zoom = map.getZoom();
@@ -99,8 +110,6 @@ export const Map = () => {
         map.panInsideBounds(vietnamBounds, { animate: true });
       }
     });
-    useEffect(() => {
-    }, [updateCnt])
     return null;
   };
 
@@ -113,6 +122,13 @@ export const Map = () => {
   }, []);
 
   useEffect(() => {
+    if (!product) {
+        setProductDescription(null)
+    }
+    getDescription(product).then(data => setProductDescription(data.description))
+  }, [product])
+
+  useEffect(() => {
     if (endDateParam) {
       setEndDate(new Date(endDateParam))
     }
@@ -122,6 +138,21 @@ export const Map = () => {
         .catch(e => console.error(e))
     }
   }, [product, resolution, frequency, endDateParam])
+  const locateLocation = (map, feature) => {
+      console.log('selectedLocation', feature)
+      let maxZoom = 14
+      if (feature.properties['type_3']) {
+      }
+      else if (feature.properties['type_2']) {
+          maxZoom = MIN_ZOOM_SIZE_WARD_LEVEL - 1;
+      }
+      else {
+          maxZoom = MIN_ZOOM_SIZE_DISTRICT_LEVEL - 1;
+      }
+      setSelectedLocation(feature); 
+      const geoJSON = L.geoJson(feature)
+      map.fitBounds(geoJSON.getBounds(), { maxZoom });
+  }
   return (
     <SliderContext.Provider value={{ stepSlider, setStepSlider }}>
       <MapContainer
@@ -134,7 +165,10 @@ export const Map = () => {
         zoomControl={false}
         attributionControl={false}
       >
-        {product?<TileLayer style={{zIndex: 39}} className={`rain-data`} opacity={0.6} url={layerUrl} />:null}
+        {product?<RainDataLayer product={product} resolution={resolution} frequency={frequency} timeStr={timeStr} 
+            mouseLocation={mouseLocation} onPrecipitation={setPrecipitation} 
+            selectedLocation={selectedLocation} onStatsUpdate={(s) => {setStatsInfo(s);setOpenCnt(openCnt + 1);}}
+        />:null}
         <TileLayer style={{zIndex: 40}} url={'/tiler/styles/klokantech-basic/{z}/{x}/{y}.png'} />
         <FeatureLayer zoom={cZoom} setZoomFn={setCZoom} 
             bBox={bBox} setBBoxFn={setBBox}
@@ -142,6 +176,7 @@ export const Map = () => {
             selectedFeature={selectedLocation}
             onFeatureSelect={setSelectedLocation}
         />
+        <CountryBorderLayer />
         <ZoomControl position='topright'/>
         <BoundControl />
         <div className='fixed bottom-5 left-0 w-full z-[45]'>
@@ -191,9 +226,16 @@ export const Map = () => {
             </div>
           )}
         </div>
-        <InfoStrip feature={highlightedFeature} selectedLocation={selectedLocation} scale={scale}/>
+        <InfoStrip feature={highlightedFeature} selectedLocation={selectedLocation} 
+            scale={scale} mouseLocation={mouseLocation} onMouseLocationChange={setMouseLocation}
+            precipitation={precipitation} statsInfo={statsInfo} timeStr={timeStr} product={product} triggerShowInfo={openCnt}
+            onSelectedLocationClick={locateLocation}
+        />
       </MapContainer>
-      <div className="fixed z-[45]" style={{ top: 55, left: 10, }}>
+      {products.size > 0?<div className="fixed z-[40] bg-white" style={{ top: 45, left: 10, padding: 3}}>
+        <ColorScale colormap='viridis' />
+      </div>:null}
+      <div className="fixed z-[45]" style={{ top: 75, left: 10, }}>
           <Button className={`${products.size===0?'button-normal':''} font-serif mb-1 rounded-sm min-w-40`} size="sm" color='primary' variant='solid' 
             style={{
                 border: '1px solid'
@@ -202,7 +244,7 @@ export const Map = () => {
               toggleProductPane(!showProductPane)
             }}
           >
-            {products.size===0?'None':`${Array.from(products)[0]}-${resolution}km-${frequency}`}
+            {products.size===0?'None':(<>{Array.from(products)[0]}-{resolution}km-{frequency} </>)}
           </Button>
           {showProductPane?<div className="w-80 py-4 px-2 rounded-md rounded-md bg-white flex flex-col gap-2"
               style={{
@@ -232,22 +274,15 @@ export const Map = () => {
               </Listbox>
           </div>:null}
       </div>
-      <div className="fixed z-[45] bg-transparent" style={{ top: 55, left: 180, }}>
+      <div className="fixed z-[45] bg-transparent" style={{ top: 75, left: 180, }}>
+        <Tooltip content={productDescription} placement='bottom'>
+            <Button variant="solid" radius='none' isIconOnly size="sm" className="bg-white mr-2" style={{border: '1px solid'}}>
+                <InfoIcon size={16} />
+            </Button>
+        </Tooltip>
         <LocationSearch onLocationSelect={(loc) => {
-            let maxZoom = 14
-            console.log('selectedLocation', loc)
             const feature = loc.features[0]
-            if (feature.properties['type_3']) {
-            }
-            else if (feature.properties['type_2']) {
-                maxZoom = MIN_ZOOM_SIZE_WARD_LEVEL - 1;
-            }
-            else {
-                maxZoom = MIN_ZOOM_SIZE_DISTRICT_LEVEL - 1;
-            }
-            setSelectedLocation(feature); 
-            const geoJSON = L.geoJson(feature)
-            map.fitBounds(geoJSON.getBounds(), { maxZoom });
+            locateLocation(map, feature)
         }}/>
       </div>
     </SliderContext.Provider>

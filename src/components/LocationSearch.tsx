@@ -27,7 +27,7 @@ export const LocationSearch = ({onLocationSelect}) => {
     }
     return (<>  
         <Button className={showSearch?'':'bg-white'} isIconOnly radius="none" color={showSearch?"primary":"white"} variant='solid' 
-            style={{border: '1px solid'}}
+            style={{border: '1px solid', verticalAlign: 'top'}}
             onPress={() => { setShowSearch(!showSearch) }} size="sm">
             <SearchIcon size={14} color={showSearch?"#fff":"#006FEE"} filled={false} />
         </Button>

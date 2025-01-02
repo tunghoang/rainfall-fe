@@ -74,6 +74,9 @@ export const postDataset = async (
       body: formData,
     });
     const data = await response.json();
+    if (!response.ok) {
+        throw new Error(JSON.stringify(data))
+    }
     return data;
   } catch {
     toast.error('Failed to create dataset', {autoClose: 2000});
@@ -155,12 +158,35 @@ export const downloadDatasetRaw1 = async (product: string, resolution:int, frequ
     throw e
   }
 }
+export const downloadDatasetRaw2 = async (product: string, resolution:int, frequency:string, timeStr:string, token:string) => {
+  const url = `${BASE_URL}/datasets/download/${product}/${resolution}/${frequency}/${timeStr}`
+  try {
+    const _token = token || localStorage.getItem('token')
+    /*if (!_token || _token === 'undefined' || _token === 'null') {
+        throw new Error('User not logged in')
+    }*/
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${_token}`
+        }, 
+    });
+    return response
+  }
+  catch(e) {
+    toast.error(e.message)
+    throw e
+  }
+}
 
 export const getDateTimeLimits = async (product: string, resolution: string, frequency: string) => {
   const url = `${BASE_URL}/datasets/time_limits/${product}/${resolution}/${frequency}`
   try {
     const response = await fetch(url)
     const limits = await response.json();
+    if (!response.ok) {
+        throw new Error(JSON.stringify(limits))
+    }
     return limits
   }
   catch(e) {
@@ -185,6 +211,9 @@ export const login = async (username, password) => {
         });
 
         const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(JSON.stringify(payload))
+        }
         return payload
     }
     catch(e) {
@@ -209,6 +238,9 @@ export const listUsers = async (limit, offset, token) => {
         });
 
         const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(JSON.stringify(payload))
+        }
         return payload
     }
     catch(e) {
@@ -235,6 +267,9 @@ export const newUser = async (user, token) => {
         });
 
         const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(JSON.stringify(payload))
+        }
         return payload
     }
     catch(e) {
@@ -260,6 +295,37 @@ export const deleteUsers = async (userIds, token) => {
         });
 
         const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(JSON.stringify(payload))
+        }
+        return payload
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+export const getLocations = async (level,gid, token) => {
+    const _token = token || localStorage.getItem('token')
+    const url = `${BASE_URL}/locations`
+    try {
+        if (!_token || _token === 'undefined' || _token === 'null') {
+            throw new Error('User not logged in')
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${_token}`
+            }, 
+            body: JSON.stringify({action: 'get', gid, level})
+        });
+
+        const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(JSON.stringify(payload))
+        }
         return payload
     }
     catch(e) {
@@ -285,6 +351,9 @@ export const searchLocations = async (searchStr, cbFn, token) => {
         });
 
         const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(JSON.stringify(payload))
+        }
         cbFn(payload)
     }
     catch(e) {
@@ -308,7 +377,63 @@ export const getLocation = async (gid, token) => {
         });
 
         const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(JSON.stringify(payload))
+        }
         return payload
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+
+export const analyze = async (product, gid, level, from, to, token) => {
+    const _token = token || localStorage.getItem('token')
+    const url = `${BASE_URL}/analyze`
+    console.log("analyze")
+    try {
+        if (!_token || _token === 'undefined' || _token === 'null') {
+            throw new Error('User not logged in')
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${_token}`
+            }, 
+            body: JSON.stringify({product, gid, level, fromDate: from, to})
+        });
+
+        if (response.status === 200) {
+            const payload = await response.json()
+            return payload
+        }
+        else {
+            const payload = await response.json()
+            throw new Error(JSON.stringify(payload))
+        }
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+
+export const getDescription = async (product) => {
+    const url = `${BASE_URL}/describe/${product}/${localStorage.getItem('lang') || 'en'}`
+    try {
+        const response = await fetch(url);
+
+        if (response.status === 200) {
+            const payload = await response.json()
+            return payload
+        }
+        else {
+            const payload = await response.json()
+            throw new Error(JSON.stringify(payload))
+        }
     }
     catch(e) {
         toast.error(e.message)

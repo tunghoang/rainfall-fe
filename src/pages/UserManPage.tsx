@@ -8,6 +8,7 @@ import { UserDialog } from '@/dialogs/UserDialog'
 import { Button, useDisclosure } from '@nextui-org/react';
 import CloseIcon from '@/icons/Close'
 import { ConfirmationModal } from '@/dialogs/ConfirmationModal';
+import _tr from '@/translation'
 import { toast } from "react-toastify";
 
 
@@ -44,8 +45,9 @@ export default function UserManPage() {
   },[reload])
   return (
     <DefaultLayout>
-      <section className='flex flex-col items-center justify-center gap-4 py-8 md:py-10'>
-        <h1 className='text-2xl font-bold text-left w-full'>User Accounts</h1>
+      <section className='flex flex-col gap-4 py-8 md:py-10'>
+        <h1 className='max-w-lg text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200'>{_tr('User Accounts')}</h1>
+        <p>{_tr('User account managment for the whole system')}</p>
         <div className='flex justify-start gap-2.5 w-full'>
           <div className='flex-1 flex justify-end gap-2.5 items-center '>
             <UserDialog onCreate={(data) => {

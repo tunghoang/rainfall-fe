@@ -1,4 +1,5 @@
 import { useDataConfigByUrl } from '@/hooks/useDataConfigByUrl';
+import geoblaze from 'geoblaze'
 import { title } from '@/components/primitives';
 import React from 'react';
 import { CreateModal } from './components/CreateModal';
@@ -8,13 +9,13 @@ import { dataTypes } from '@/config/data-management.config';
 
 import { toast } from 'react-toastify'
 
-import { getDatasets, deleteDatasets, downloadDataset, postDataset } from '../../api';
+import { getDatasets, deleteDatasets, downloadDataset, downloadDatasetRaw, postDataset } from '../../api';
 import DefaultLayout from '@/layouts/default';
 import { Button, Chip, DateRangePicker, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { CustomTable } from './components/CustomTable';
 import { useColumnConfig } from '@/hooks/useColumnConfig';
 import { parseDate, parseDateTime } from '@internationalized/date';
-import { formatDate } from '@/utils'
+import { formatDate, toCanvas } from '@/utils'
 import {getDateTimeLimits} from '@/api'
 import CloseIcon from '@/icons/Close'
 import { UserContext } from '@/App'
@@ -22,6 +23,8 @@ import { UserContext } from '@/App'
 export default function DataSourcesPage() {
   const token = React.useContext(UserContext)
 
+  const canvasContainer = React.useRef()
+  const [canvasDisplay, setCanvasDisplay] = React.useState('none')
   const today = new Date()
 
   if (token === null || token === undefined || token === 'undefined' || token === 'null') {
@@ -54,8 +57,8 @@ export default function DataSourcesPage() {
 
   const [loading, setLoading] = React.useState(false)
   const [dataSpecs, setDataSpecs] = React.useState<string[]>([
-    dataTypes.hourly4.value.resolution,
-    dataTypes.hourly4.value.frequency,
+    dataTypes.daily10.value.resolution,
+    dataTypes.daily10.value.frequency,
   ]);
 
   const newDatasetTemplate = React.useMemo(() => {
@@ -77,7 +80,7 @@ export default function DataSourcesPage() {
     end: parseDate('2019-01-10')
   })
 
-  const [dateLimits, setDateLimits] = React.useState({min: "", max: ""})
+  const [dateLimits, setDateLimits] = React.useState({min: new Date("2019-01-01"), max: new Date("2019-01-10")})
 
   const datasetDelete = (datasetIds: string[]) => {
     console.log(datasetIds)
@@ -92,9 +95,18 @@ export default function DataSourcesPage() {
     const getLimits = async () => {
       try {
         const limits = await getDateTimeLimits(dataName, dataSpecs[RESOLUTION], dataSpecs[FREQUENCY])
-        setDateLimits({min: new Date(limits.min), max: new Date(limits.max)})
-        console.log(limits)
-        setPeriod({start: parseDate(limits.min.substr(0, 10)), end: parseDate(limits.max.substr(0, 10))})
+        const startDate = new Date(limits.min)
+        const endDate = new Date(limits.max)
+        setDateLimits({min: startDate, max: endDate})
+
+        const d = new Date(startDate)
+        d.setDate(d.getDate() + 30)
+        if (endDate > d) {
+            setPeriod({start: parseDate(formatDate(startDate)), end: parseDate(formatDate(d))})
+        }
+        else {
+            setPeriod({start: parseDate(formatDate(startDate)), end: parseDate(formatDate(endDate))})
+        }
       }
       catch(e) {
         toast.error(e)
@@ -130,8 +142,8 @@ export default function DataSourcesPage() {
 
   return (
     <DefaultLayout>
-      <section className='flex flex-col items-center justify-center gap-4 py-8 md:py-10'>
-        <h1 className='text-2xl font-bold text-left w-full'>{dataName}
+      <section className='flex flex-col gap-4 py-8 md:py-10'>
+        <h1 className='text-3xl font-extrabold text-left text-slate-900 tracking-tight dark:text-slate-200'>{dataName}
             <span className='ml-3 mr-1 font-light text-sm italic'>from</span><Chip radius="sm" >{formatDate(dateLimits.min)}</Chip> {"  "} 
             <span className='ml-3 mr-1 font-light text-sm italic'>to</span><Chip radius="sm" >{formatDate(dateLimits.max)}</Chip></h1>
         <div className='flex justify-start gap-2.5 w-full'>
@@ -171,8 +183,8 @@ export default function DataSourcesPage() {
             onChange={(p) => {console.log(p);setPeriod(p)}}
             label='Time duration'
             className='max-w-xs'
-            minValue={parseDate('2019-01-01')}
-            maxValue={parseDate(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)}
+            minValue={parseDate(formatDate(dateLimits.min))}
+            maxValue={parseDate(formatDate(dateLimits.max))}
             size='sm'
             pageBehavior='single'
             visibleMonths={2}
@@ -202,10 +214,36 @@ export default function DataSourcesPage() {
           columns={configColumns}
           onItemDelete={(item) => datasetDelete([item.id])}
           onItemUpdate={(item) => console.log(item)}
-          onItemPreview={(item) => console.log(item)}
+          onItemPreview={(item) => {
+            console.log(item)
+            downloadDatasetRaw(item.id).then(async (response) => {
+              if (!response.ok) {
+                throw new Error('cannot download data')
+              }
+              
+              const arrayBuf = await response.arrayBuffer();
+              const georaster = await geoblaze.parse(arrayBuf)
+              console.log(georaster)
+              const canvas = toCanvas(georaster, { height: georaster.height, width: georaster.width });
+              canvasContainer.current.textContent = ''
+              canvasContainer.current.appendChild(canvas)
+              setCanvasDisplay('block')
+            }).catch(e => console.error(e))
+          }}
           onItemDownload={(item) => downloadDataset(item.id)}
         />
       </section>
+      <div className="fixed bg-transparent" style={{top: 20, left:0, bottom: 20, right: 0, display: canvasDisplay}}>
+        <div className="inline-block absolute bg-white p-4 border-solid border-1 border-gray-300 drop-shadow-lg" 
+            style={{top: '50%', left: '50%', transform: 'translate(-50%, -50%'}} >
+          <div className="text-right mb-2">
+            <Button className="text-primary" size='sm' variant='light' radius='none' onClick={() => setCanvasDisplay('none')}>Close</Button>
+          </div>
+          <div className="p-2 bg-green-200">
+            <div ref={canvasContainer}></div>
+          </div>
+        </div>
+      </div>
     </DefaultLayout>
   );
 }
