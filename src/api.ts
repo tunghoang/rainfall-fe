@@ -440,3 +440,37 @@ export const getDescription = async (product) => {
         throw e
     }
 }
+
+export const changePassword = async(password, token) => {
+    const _token = token || localStorage.getItem('token')
+    const url = `${BASE_URL}/change_password`
+    console.log("change password")
+    try {
+        if (!_token || _token === 'undefined' || _token === 'null') {
+            throw new Error('User not logged in')
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${_token}`
+            }, 
+            body: JSON.stringify({password})
+        });
+
+        if (response.status === 200) {
+            const payload = await response.json()
+            return payload
+        }
+        else {
+            const payload = await response.json()
+            throw new Error(JSON.stringify(payload))
+        }
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+
+}

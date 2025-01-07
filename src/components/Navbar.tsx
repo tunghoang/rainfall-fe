@@ -19,6 +19,7 @@ import { ChevronDown } from '@/components/icons';
 import { Logo } from '@/components/icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import { SettingsModal } from '@/dialogs/SettingsModal.tsx'
 import _tr from "../translation"
 
 import SignIn from '../dialogs/SignIn'
@@ -33,6 +34,7 @@ import { login } from "@/api"
 
 export const Navbar = ({token, setToken}) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen: isSettingsOpen, onOpen:onSettingsOpen, onOpenChange: onSettingsOpenChange } = useDisclosure()
   //const __token = localStorage.getItem('token')
   //const [ token, setToken ] = useState(__token)
   const { pathname } = useLocation()
@@ -164,9 +166,13 @@ export const Navbar = ({token, setToken}) => {
         {token?<>
         <NavbarItem>
           <div className="py-2 cursor-pointer">
-            <Button radius='none' variant='light' className="px-0">
+            <Button radius='none' variant='light' className="px-0" onPress={() => {
+              console.log('kakaka')
+              onSettingsOpen()
+            }}>
               <UserIcon style={{display: 'inline-block'}} filled={false}/><span>{userName}</span>
             </Button>
+            <SettingsModal isOpen={isSettingsOpen} onOpenChange={onSettingsOpenChange} />
           </div>
         </NavbarItem>
         <NavbarItem>
