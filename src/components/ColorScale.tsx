@@ -1,12 +1,13 @@
 import {useEffect, useState, useMemo} from 'react'
-export const ColorScale = ({colormap}) => {
+import { STRETCH_RANGE } from '@/config/constant'
+export const ColorScale = ({colormap, stretchRange}) => {
     const [marks, setMarks] = useState([])
     const period = useMemo(() => ( Math.floor(marks.length / 10)), [marks])
     useEffect(() => {
-        fetch(`/colormap?stretch_range=[0,15]&num_values=15&colormap=${colormap}`).then( response => response.json() ).then(data => {
+        fetch(`/colormap?stretch_range=${stretchRange || ("[0," + STRETCH_RANGE[1] + "]")}&num_values=15&colormap=${colormap}`).then( response => response.json() ).then(data => {
             setMarks(data.colormap)
         })
-    }, [colormap])
+    }, [colormap, stretchRange])
     return <div className='bg-white text-tiny'>
         <div className='flex gap-0 text-white'>
             {marks.map((m,idx) => (idx%period === 0?<div style={{

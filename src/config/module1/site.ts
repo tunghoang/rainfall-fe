@@ -20,10 +20,10 @@ export const siteConfig = {
       href: "/about",
       public: true
     },*/
+    dataManagementNavItems,
     {
       label: "USER MANAGEMENT",
       href: '/user'
     },
-    dataManagementNavItems,
   ],
 };

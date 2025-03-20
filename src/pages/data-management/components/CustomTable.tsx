@@ -5,20 +5,13 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagina
 import { ConfirmationModal } from '@/dialogs/ConfirmationModal'
 import React from 'react';
 
-interface IProps {
-  rows: any[];
-  columns: {
-    key: string;
-    label: string;
-  }[];
-}
-
 export const CustomTable = ({ rows, columns, loadingState,
     selectedKeys, onSelectionChange, 
     onItemDelete, 
     onItemUpdate, 
     onItemPreview,
-    onItemDownload }: IProps) => {
+    onItemDownload,
+    onItemCSVDownload }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   //const [ isOpen, onOpen ] = React.useState(false)
   const [currentItem, setCurrentItem] = React.useState(null)
@@ -48,6 +41,7 @@ export const CustomTable = ({ rows, columns, loadingState,
           <Button
             isIconOnly
             size='sm'
+            radius='sm'
             variant='light'
             color="primary"
             className='text-lg opacity-75'
@@ -61,20 +55,33 @@ export const CustomTable = ({ rows, columns, loadingState,
           <Button
             isIconOnly
             size='sm'
+            radius='sm'
             variant='light'
             color="primary"
             className='text-lg opacity-75'
             onPress={()=> {
-                console.log("Download")
                 onItemDownload(item)
             }}
           >
             <DownloadIcon size={16} strokeWidth={20} stroke="currentColor" fill="currentColor" />
           </Button>
           <Button
+            size='sm'
+            variant='light'
+            radius='sm'
+            color="primary"
+            className='opacity-75 align-top'
+            onPress={()=> {
+                onItemCSVDownload(item)
+            }}
+          >
+            <span className="text-tiny">CSV</span>
+          </Button>
+          <Button
             color="danger"
             isIconOnly
             size='sm'
+            radius='sm'
             variant='light'
             className='text-lg'
             onPress={()=> {

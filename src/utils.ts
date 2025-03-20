@@ -22,6 +22,9 @@ export function formatDateTime(d:Date) {
   return `${s}T${s1}`
 }
 
+export const datediff = (first, second) => {        
+  return Math.round((second - first) / (1000 * 60 * 60 * 24));
+}
 // Pad a number to 2 digits
 const pad = n => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
 // Get timezone offset in ISO format (+hh:mm or -hh:mm)
@@ -44,6 +47,8 @@ export const toISOStringWithTimezone = date => {
 function toImageData(georaster, canvasWidth, canvasHeight) {
   if (georaster.values) {
     const { noDataValue, mins, ranges, maxs, values } = georaster;
+    console.log('maxs:', maxs);
+    console.log('ranges:', ranges);
     const numBands = values.length;
     const xRatio = georaster.width / canvasWidth;
     const yRatio = georaster.height / canvasHeight;
@@ -122,4 +127,18 @@ export const toCanvas = (georaster, options) => {
     context.putImageData(imageData, 0, 0);
     return canvas;
   }
+}
+
+export const toCSV = (columns, columnHeaders) => {
+  let csvContent = "data:text/csv;charset=utf-8," + columnHeaders.join(",") + "\n";
+  for (let idx = 0; idx < columns[0].length ; idx++) {
+    csvContent += (columns.map(c => c[idx]).join(",") + '\n')
+  }
+  const url = encodeURI(csvContent)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'plotData.csv'
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
 }

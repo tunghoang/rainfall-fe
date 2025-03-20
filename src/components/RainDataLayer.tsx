@@ -9,12 +9,13 @@ import { debounce } from 'lodash'
 
 export const RainDataLayer = ({url, 
         product, resolution, frequency, timeStr, 
-        colormap='viridis', 
+        colormap='indra2', 
         mouseLocation, onPrecipitation, 
-        selectedLocation, onStatsUpdate
+        selectedLocation, onStatsUpdate,
+        stretchRange
 }) => {
-    const layerUrl = useMemo(() => (`/singleband/${product}/${resolution}/${frequency}/${timeStr}/{z}/{x}/{y}.png?colormap=${colormap}&stretch_range=[0,4]`), [product, resolution, frequency, timeStr, colormap]) 
     const [rainData, setRainData] = useState()
+    const layerUrl = useMemo(() => (`/singleband/${product}/${resolution}/${frequency}/${timeStr}/{z}/{x}/{y}.png?colormap=${colormap}&stretch_range=${stretchRange}`), [product, resolution, frequency, timeStr, colormap, stretchRange]) 
 
     const getLocPrecipitation = debounce((mouseLoc) => {
         try {
@@ -38,8 +39,8 @@ export const RainDataLayer = ({url,
                 throw new Error('Cannot download rain data')
             }
             const arrayBuf = await response.arrayBuffer();
-            //const georaster = await parseGeoraster(arrayBuf)
-            const georaster = await geoblaze.parse(arrayBuf)
+            const georaster = await parseGeoraster(arrayBuf)
+            //const georaster = await geoblaze.parse(arrayBuf)
 
             console.log('arrayBuf', product, timeStr, georaster)
             setRainData(georaster)

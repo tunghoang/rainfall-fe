@@ -106,8 +106,37 @@ export const deleteDatasets = async (ids: string[], token: string) => {
     toast.error(e.message)
   }
 }
+export const downloadCSV = async ({id, name, resolution, frequency, time}, token) => {
+  const id_ = id;
+  const url = `${BASE_URL}/datasets/csv/${name}/${resolution.replace("KM", "")}/${frequency}/${time}`
+  try {
+    const _token = token || localStorage.getItem('token')
+    if (!_token || _token === 'undefined' || _token === 'null') {
+        throw new Error('User not logged in')
+    }
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${_token}`
+        }, 
+    });
+    const blob = await response.blob()
+    const _url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = _url
+    a.download = `${name}_${resolution}_${time.substr(0, 13)}.csv`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  }
+  catch(e) {
+    toast.error(e.message)
+    throw e
+  }
+}
 
-export const downloadDataset = async (id_: string, token) => {
+export const downloadDataset = async ({id, name, resolution, time}, token) => {
+  const id_ = id;
   const url = `${BASE_URL}/datasets/download/${id_}`
   try {
     const _token = token || localStorage.getItem('token')
@@ -124,7 +153,7 @@ export const downloadDataset = async (id_: string, token) => {
     const _url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = _url
-    a.download = `${id_}.tif`
+    a.download = `${name}_${resolution}_${time.substr(0, 13)}.tif`
     document.body.appendChild(a)
     a.click()
     a.remove()
@@ -207,6 +236,34 @@ export const login = async (username, password) => {
             body: JSON.stringify({
                 u: username,
                 p: password
+            }),
+        });
+
+        const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(JSON.stringify(payload))
+        }
+        return payload
+    }
+    catch(e) {
+        toast.error(e.message)
+        throw e
+    }
+}
+
+export const register = async (username, password, fullname) => {
+    const url = `${BASE_URL}/users/register`
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({
+                email: username,
+                fullname: fullname,
+                password: password
             }),
         });
 

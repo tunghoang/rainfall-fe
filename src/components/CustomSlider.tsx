@@ -1,11 +1,82 @@
 import { Slider } from '@nextui-org/slider';
+import { DateRangePicker, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@nextui-org/react';
 import { useState, useEffect, useContext, useMemo } from 'react';
-//import TimeAxis from './TimeAxis';
 import { format } from 'date-fns';
 import { SliderContext } from './Map';
-import { calcStartDate } from '@/utils'
+import { calcStartDate, datediff } from '@/utils'
+import { parseDate, parseDateTime } from '@internationalized/date';
+import SettingsIcon from '@/icons/Settings'
+import _tr from '@/translation'
+import { formatDate } from '@/utils'
 
-export const CustomSlider = ({endDate, startDate, onChange}) => {
+const PeriodModal = ({start, end, stepSlider, isOpen, onOpenChange, onChange}) => {
+
+  const [period, setPeriod] = useState()
+
+  const now = new Date()
+
+  const days = useMemo(() => period?datediff(period.start.toDate(), period.end.toDate()):-1, [period])
+  useEffect(() => {
+    if (start && end) {
+      setPeriod({
+        start: parseDate(formatDate(start)),
+        end: parseDate(formatDate(end))
+      })
+    }
+  }, [start, end])
+  return (
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      className=''
+      placement='top'
+      backdrop='opaque'
+      classNames={{
+        backdrop: 'bg-background/60',
+      }}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className='text-primary'>{_tr('Select time range')}</ModalHeader>
+            <ModalBody>
+              <div className='mb-4'>
+                <DateRangePicker 
+                  value={period}
+                  onChange={(p) => {
+                    console.log('pERIOD', period)
+                    setPeriod(p)
+                  }}
+                  label='Time duration'
+                  className='max-w-md'
+                  maxValue={parseDate(formatDate(now))}
+                  size='sm'
+                  pageBehavior='single'
+                  visibleMonths={1}
+                />
+              </div>
+              {!period?(<div className='mb-4'>
+                <p className='text-danger text-tiny'>{_tr('Time range is not valid')}</p>
+              </div>):null}
+              {(days > 30)?(<div className='mb-4'>
+                <p className='text-danger text-tiny'>{_tr('Time range should be less than 30 days')}</p>
+              </div>):null}
+              {(days < stepSlider)?(<div className='mb-4'>
+                <p className='text-danger text-tiny'>{_tr('Time range should be greater than') + " " + stepSlider + " " + _tr('days')}</p>
+              </div>):null}
+            </ModalBody>
+            <ModalFooter>
+              <Button color='primary' variant='flat' isDisabled={!period || days > 30 || days < stepSlider }
+                onClick={() => {onClose(); onChange(period)}} > {_tr('Ok')} </Button>
+              <Button onClick={onClose} variant='flat'> {_tr('Close')} </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  )
+}
+export const CustomSlider = ({endDate, startDate, onChange, onRangeChange}) => {
   const { stepSlider, setStepSlider } = useContext(SliderContext) || { stepSlider: 0, setStepSlider: () => {} };
 
   const [displayDate, setDisplayDate] = useState<string>();
@@ -25,6 +96,7 @@ export const CustomSlider = ({endDate, startDate, onChange}) => {
     return now
   }, [endDate1])*/
 
+  const {isOpen, onOpen, onOpenChange} = useDisclosure()
   // Function to calculate the number of days between two dates
   const calculateDaysBetween = (start: Date, end: Date) => {
     try {
@@ -50,18 +122,40 @@ export const CustomSlider = ({endDate, startDate, onChange}) => {
   const totalSteps = useMemo(() => (calculateDaysBetween(startDate1, endDate1)), [startDate1]);
 
   useEffect(() => {
-    const currentDate = addDays(startDate1, stepSlider - 1);
-    setDisplayDate(currentDate.toLocaleDateString());
-    onChange(startDate1, stepSlider)
+    if (stepSlider > 0) {
+      const currentDate = addDays(startDate1, stepSlider - 1);
+      setDisplayDate(currentDate.toLocaleDateString());
+      onChange(startDate1, stepSlider)
+    }
   }, [startDate1, stepSlider]);
 
+  useEffect(() => {
+    if ( !stepSlider ) {
+      setStepSlider(totalSteps);
+    }
+  }, [stepSlider])
+
   return (
-    <div className='flex flex-col align-middle justify-center p-1.5 pb-0 bg-white grow'>
-      <div className='flex justify-between text-xs'>
+    <div className='flex flex-col justify-center p-1.5 pb-0 bg-white grow'>
+      <div className='flex justify-between items-end text-xs'>
         <p>{format(startDate1, 'dd/MM/yyyy')}</p>
-        {displayDate ? <p className='bg-primary text-white px-2'>{format(displayDate, 'dd/MM/yyyy')} </p>: ''}
+        <div>
+          <Button className="text-primary align-middle" isIconOnly size='sm' radius='none' variant='light' 
+            onClick={() => {
+              console.log("date range")
+              onOpen()
+            }}>
+            <SettingsIcon size={16} />
+          </Button>
+          {displayDate ? <div className='inline-block bg-primary text-white px-2'>{format(displayDate, 'dd/MM/yyyy')} </div>: ''}
+        </div>
         <p>{format(endDate1, 'dd/MM/yyyy')}</p>
       </div>
+      <PeriodModal start={startDate1} end={endDate1} stepSlider={stepSlider} isOpen={isOpen} onOpenChange={onOpenChange} 
+        onChange={(p) => {
+          console.log(p);
+          onRangeChange(p)
+        }} />
       <Slider
         aria-label="time-slider"
         size='sm'
@@ -81,10 +175,6 @@ export const CustomSlider = ({endDate, startDate, onChange}) => {
           thumb: 'w-4 h-4',
         }}
       />
-      {/*<TimeAxis
-        startDate={startDate1}
-        endDate={endDate1}
-      />*/}
     </div>
   );
 };

@@ -1,18 +1,20 @@
-import { useDataConfigByUrl } from '@/hooks/useDataConfigByUrl';
-import geoblaze from 'geoblaze'
-import { title } from '@/components/primitives';
 import React from 'react';
-import { CreateModal } from './components/CreateModal';
-import { Dataset as DatasetDialog } from './dialogs/Dataset';
+import { DatasetDialog } from './dialogs/Dataset';
+
 import { ConfirmationModal } from '@/dialogs/ConfirmationModal';
+import { CustomTable } from './components/CustomTable';
+
+import { useDataConfigByUrl } from '@/hooks/useDataConfigByUrl';
+//import geoblaze from 'geoblaze'
+import parseGeoraster from 'georaster'
+import { title } from '@/components/primitives';
 import { dataTypes } from '@/config/data-management.config';
 
 import { toast } from 'react-toastify'
 
-import { getDatasets, deleteDatasets, downloadDataset, downloadDatasetRaw, postDataset } from '../../api';
+import { getDatasets, deleteDatasets, downloadDataset, downloadCSV, downloadDatasetRaw, postDataset } from '@/api';
 import DefaultLayout from '@/layouts/default';
 import { Button, Chip, DateRangePicker, Select, SelectItem, useDisclosure } from '@nextui-org/react';
-import { CustomTable } from './components/CustomTable';
 import { useColumnConfig } from '@/hooks/useColumnConfig';
 import { parseDate, parseDateTime } from '@internationalized/date';
 import { formatDate, toCanvas } from '@/utils'
@@ -85,10 +87,6 @@ export default function DataSourcesPage() {
   const datasetDelete = (datasetIds: string[]) => {
     console.log(datasetIds)
     deleteDatasets(datasetIds)
-  }
-
-  const datasetDownload = (dataset) => {
-    console.log(dataset)
   }
 
   React.useEffect(() => {
@@ -222,15 +220,16 @@ export default function DataSourcesPage() {
               }
               
               const arrayBuf = await response.arrayBuffer();
-              const georaster = await geoblaze.parse(arrayBuf)
-              console.log(georaster)
-              const canvas = toCanvas(georaster, { height: georaster.height, width: georaster.width });
+              const georasterData = await parseGeoraster(arrayBuf)
+              console.log(georasterData)
+              const canvas = toCanvas(georasterData, { height: georasterData.height, width: georasterData.width });
               canvasContainer.current.textContent = ''
               canvasContainer.current.appendChild(canvas)
               setCanvasDisplay('block')
             }).catch(e => console.error(e))
           }}
-          onItemDownload={(item) => downloadDataset(item.id)}
+          onItemDownload={(item) => downloadDataset(item)}
+          onItemCSVDownload={(item) => downloadCSV(item)}
         />
       </section>
       <div className="fixed bg-transparent" style={{top: 20, left:0, bottom: 20, right: 0, display: canvasDisplay}}>

@@ -25,9 +25,12 @@ import { UserContext } from '@/App'
 import { formatDate, calcStartDate, calcCurrentDate } from '@/utils'
 import { format } from 'date-fns';
 import { useSearchParams } from 'react-router-dom'
-import {DEFAULT_ZOOM, MIN_ZOOM_SIZE_DISTRICT_LEVEL, MIN_ZOOM_SIZE_WARD_LEVEL} from '@/config/constant';
+import {DEFAULT_ZOOM, MIN_ZOOM_SIZE_DISTRICT_LEVEL, MIN_ZOOM_SIZE_WARD_LEVEL, STRETCH_RANGE} from '@/config/constant';
 
 import {getDateTimeLimits, getDescription} from '@/api'
+
+//import L from 'leaflet'
+//import '@/SmoothWheelZoom.js'
 
 import { 
     Button, 
@@ -55,6 +58,7 @@ export const Map = () => {
   const token = useContext(UserContext)
   const [endDate, setEndDate] = useState()
 
+  const [tooltipOpen, setTooltipOpen] = useState(false)
   const [openCnt, setOpenCnt] = useState(0)
   const [productDescription, setProductDescription] = useState()
 
@@ -76,7 +80,7 @@ export const Map = () => {
 
   const [highlightedFeature, setHighlightedFeature] = useState(null)
 
-  const [stepSlider, setStepSlider] = useState(1);
+  const [stepSlider, setStepSlider] = useState();
   const [resFreq, setResFreq] = useState('10_daily')
   const [scale, setScale] = useState<number>();
   const [products, setProducts] = useState(new Set([]))
@@ -87,11 +91,10 @@ export const Map = () => {
 
   const resolution = useMemo(() => resFreq.split('_')[0], [resFreq])
   const frequency = useMemo(() => resFreq.split('_')[1], [resFreq])
-  const product = useMemo(() => (products.size > 0?Array.from(products)[0]:null), [products])
+  const product = useMemo(() => (products.size > 0 ? Array.from(products)[0]:null), [products])
   const [timeStr, setTimeStr] = useState('20190101080000')
   const [precipitation, setPrecipitation] = useState()
   const [statsInfo, setStatsInfo] = useState({})
-  const layerUrl = useMemo(() => (`/singleband/${product}/${resolution}/${frequency}/${timeStr}/{z}/{x}/{y}.png?colormap=viridis&stretch_range=[0,15]`), [product, resolution, frequency, timeStr]) 
 
   const BoundControl = () => {
     map = useMapEvent('moveend', () => {
@@ -117,6 +120,15 @@ export const Map = () => {
   const startDateParam = searchParams.get('startDate')
   const endDateParam = useMemo(() => searchParams.get('endDate'), [searchParams])
 
+  const stretchRange = useMemo(() => {
+    if (product) {
+      const info = dataManagementNavItems.subItems.find(item => item.name === product)
+      console.log(info?.stretchRange)
+      return info?.stretchRange || `[0,${STRETCH_RANGE[1]}]`
+    }
+    return `[0,${STRETCH_RANGE[1]}]`
+  }, [product])
+
   useEffect(() => {
     setScale(calculateScale(DEFAULT_ZOOM, 16.028511));
   }, []);
@@ -138,6 +150,15 @@ export const Map = () => {
         .catch(e => console.error(e))
     }
   }, [product, resolution, frequency, endDateParam])
+
+  useEffect(() => {
+    const topProduct = listLayers[0]?.name
+    if (!topProduct) return;
+
+    setTimeout(() => {
+      setProducts(new Set([topProduct]))
+    }, 1000)
+  }, [listLayers])
   const locateLocation = (map, feature) => {
       console.log('selectedLocation', feature)
       let maxZoom = 14
@@ -168,6 +189,7 @@ export const Map = () => {
         {product?<RainDataLayer product={product} resolution={resolution} frequency={frequency} timeStr={timeStr} 
             mouseLocation={mouseLocation} onPrecipitation={setPrecipitation} 
             selectedLocation={selectedLocation} onStatsUpdate={(s) => {setStatsInfo(s);setOpenCnt(openCnt + 1);}}
+            stretchRange={stretchRange}
         />:null}
         <TileLayer style={{zIndex: 40}} url={'/tiler/styles/klokantech-basic/{z}/{x}/{y}.png'} />
         <FeatureLayer zoom={cZoom} setZoomFn={setCZoom} 
@@ -210,7 +232,14 @@ export const Map = () => {
                   const timePart = frequency === 'daily'?'000000':`${String(aDate.getHours()).padStart(2, '0')}${String(aDate.getMinutes()).padStart(2, '0')}${String(aDate.getSeconds()).padStart(2, '0')}`
                   const s = dayPart + timePart
                   setTimeStr(s)
-                }} 
+                }}
+                onRangeChange={(p) => {
+                  setSearchParams(params => {
+                    params.set("startDate", formatDate(p.start.toDate()))
+                    params.set("endDate", formatDate(p.end.toDate()))
+                    return params
+                  })
+                }}
               />
               <div>
                 <Button radius="none" onClick={() => {
@@ -233,7 +262,7 @@ export const Map = () => {
         />
       </MapContainer>
       {products.size > 0?<div className="fixed z-[40] bg-white" style={{ top: 45, left: 10, padding: 3}}>
-        <ColorScale colormap='viridis' />
+        <ColorScale colormap='indra2' stretchRange={stretchRange}/>
       </div>:null}
       <div className="fixed z-[45]" style={{ top: 75, left: 10, }}>
           <Button className={`${products.size===0?'button-normal':''} font-serif mb-1 rounded-sm min-w-40`} size="sm" color='primary' variant='solid' 
@@ -268,15 +297,23 @@ export const Map = () => {
                   variant="flat"
                   selectionMode="single"
                   selectedKeys={products}
-                  onSelectionChange={(v) => {setProducts(v);toggleProductPane(!showProductPane)}}
+                  onSelectionChange={(v) => {
+                    setProducts(v);
+                    setSearchParams({});
+                    toggleProductPane(!showProductPane)
+                  }}
               >
                  {listLayers?.map(layer => <ListboxItem key={layer.name}>{layer.label || layer.name}</ListboxItem>)}
               </Listbox>
           </div>:null}
       </div>
       <div className="fixed z-[45] bg-transparent" style={{ top: 75, left: 180, }}>
-        <Tooltip content={productDescription} placement='bottom'>
-            <Button variant="solid" radius='none' isIconOnly size="sm" className="bg-white mr-2" style={{border: '1px solid'}}>
+        <Tooltip content={productDescription} isOpen={tooltipOpen} placement='bottom' onOpenChange={(open) => {
+            if (open) { setTooltipOpen(false); }
+        }}>
+            <Button variant="solid" radius='none' isIconOnly size="sm" className="bg-white mr-2" style={{border: '1px solid'}}
+                onClick={() => setTooltipOpen(!tooltipOpen)}
+            >
                 <InfoIcon size={16} />
             </Button>
         </Tooltip>

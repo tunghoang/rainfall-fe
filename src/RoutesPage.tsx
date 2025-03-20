@@ -1,14 +1,17 @@
+import { lazy, Suspense } from 'react'
 import { useRoutes, Navigate } from 'react-router-dom';
 
-import HomePage from '@/pages/HomePage';
 import MapPage from './pages/MapPage';
-import DashboardPage from '@/pages/DashboardPage';
+//import DashboardPage from '@/pages/DashboardPage';
 import AboutPage from '@/pages/AboutPage';
 import AdminZonePage from '@/pages/AdminZonePage';
 import UserManPage from '@/pages/UserManPage';
+import DataSourcesPage from './pages/data-management/DataSourcePage';
+
+const DashboardPage = lazy( () => import('@/pages/DashboardPage') )
+
 import { siteConfig } from './config/site.ts'
 import { dataManagementNavItems } from './config/data-management.config';
-import DataSourcesPage from './pages/data-management/DataSourcePage';
 
 function RoutesPage() {
   console.log(siteConfig.navItems)
@@ -16,8 +19,8 @@ function RoutesPage() {
     /*{ path: '/', element: <MapPage />, index: true },*/
     { path: '/', element: <Navigate to={siteConfig.navItems[0].href==='/map'?siteConfig.navItems[0].href:dataManagementNavItems.subItems[0].href} />, index: true },
     //{ path: '/', element: <Navigate to={'/dashboard'} />, index: true },
-    { path: 'map', element: <MapPage /> },
-    { path: 'dashboard', element: <DashboardPage /> },
+    { path: 'map', element: <MapPage />},
+    { path: 'dashboard', element: <Suspense fallback={<div>Loading...</div>}><DashboardPage /></Suspense> },
     {
       path: 'data-management',
       children: dataManagementNavItems.subItems.map((item) => {

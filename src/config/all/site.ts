@@ -21,6 +21,7 @@ export const siteConfig = {
       public: true
     },
     {
+      admin: true,
       label: "USER MANAGEMENT",
       href: '/user'
     },

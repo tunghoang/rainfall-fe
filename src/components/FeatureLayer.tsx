@@ -5,6 +5,7 @@ import { useDisclosure } from '@nextui-org/react';
 //import { LocationDetailModal } from './LocationDetailModal';
 import { GEOSERVER_TOKEN } from '@/config/constant'
 
+import { debounce } from 'lodash'
 import { createContext } from 'react';
 
 export const GeopolygonLevelContext = createContext({
@@ -51,8 +52,10 @@ export const FeatureLayer = ({bBox, setBBoxFn, zoom, setZoomFn, onHighlightedFea
     }
   }
 
+  const dFetchAllFeatures = debounce(fetchAllFeatures, 500)
+
   useEffect(() => {
-    fetchAllFeatures(zoom || DEFAULT_ZOOM, bBox);
+    dFetchAllFeatures(zoom || DEFAULT_ZOOM, bBox);
   }, [zoom, bBox]);
 
   const defaultStyle = {

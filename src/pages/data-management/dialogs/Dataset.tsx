@@ -13,7 +13,7 @@ import {useState} from 'react'
 
 import FileInput from '../components/FileInput'
 
-export const Dataset = ({dataset, onCreate, update}) => {
+export const DatasetDialog = ({dataset, onCreate, update}) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   //const [name, setName] = useState(dataset.name)

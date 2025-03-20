@@ -49,7 +49,7 @@ nav li.admin-item {
 }
 
 .rain-data img {
-    filter: blur(15px);
+    /*filter: blur(15px);*/
 }
 
 .width-limit {

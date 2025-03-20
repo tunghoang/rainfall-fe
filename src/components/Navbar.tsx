@@ -51,6 +51,21 @@ export const Navbar = ({token, setToken}) => {
     }
     return ''
   }, [token])
+
+  let isAdmin = useMemo(() => {
+    try {
+      if (token) {
+        const payload = jwtDecode(token);
+        return payload.admin_id
+      }
+    }
+    catch(e) {
+      localStorage.removeItem('token')
+      setToken(null)
+    }
+    return false
+  }, [token])
+
   let navigate = useNavigate()
   const renderItem = (item) => {
     if ('subItems' in item) {
@@ -134,7 +149,7 @@ export const Navbar = ({token, setToken}) => {
         <div className='hidden lg:flex gap-4 justify-start ml-2 items-center'>
           {token?
             (<>
-                {siteConfig.navItems.map((item) => renderItem(item))}
+                {siteConfig.navItems.map((item) => ( (!item.admin) || (item.admin && isAdmin) )?renderItem(item):null)}
                 <NavbarItem>
                     <Autocomplete placeholder="Search for a product" variant='faded' size='sm'
                         aria-label='select product'
@@ -151,11 +166,11 @@ export const Navbar = ({token, setToken}) => {
                         {(item) => <AutocompleteItem key={item.href}>{item.label||item.name}</AutocompleteItem>}
                     </Autocomplete>
                 </NavbarItem>
-                <NavbarItem isActive={'/admin' === pathname} key='/admin' className='menu-item admin-item px-2' style={{lineHeight:2.2}} >
+                {isAdmin?<NavbarItem isActive={'/admin' === pathname} key='/admin' className='menu-item admin-item px-2' style={{lineHeight:2.2}} >
                     <Link className='text-sm' color='foreground' to='/admin' >
                         {_tr('Admin Zone')}
                     </Link>
-                </NavbarItem>
+                </NavbarItem>:null}
             </>):
             siteConfig.navItems.filter((item) => item.public).map((item) => renderItem(item))
           }
